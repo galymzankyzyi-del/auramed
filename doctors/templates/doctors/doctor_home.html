@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель врача — {{ doctor.name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f9fc; padding: 40px; color: #1d2939; }
+        .card { background: white; padding: 30px; border-radius: 16px; max-width: 800px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        h1 { color: #159a9c; margin-bottom: 20px; }
+        .stats { display: flex; gap: 20px; margin: 20px 0; }
+        .stat-box { background: #e8fafa; padding: 15px 20px; border-radius: 10px; flex: 1; text-align: center; }
+        .stat-box h2 { font-size: 28px; color: #117a7c; }
+        .btn { display: inline-block; padding: 10px 20px; background: #159a9c; color: white; text-decoration: none; border-radius: 8px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Добро пожаловать, {{ doctor.name }}!</h1>
+        <p>Ваша рабочая панель на сегодня ({{ today }}):</p>
+
+        <div class="stats">
+            <div class="stat-box">
+                <h2>{{ total_today }}</h2>
+                <p>Всего записей</p>
+            </div>
+            <div class="stat-box">
+                <h2>{{ pending_today }}</h2>
+                <p>Ожидают</p>
+            </div>
+            <div class="stat-box">
+                <h2>{{ completed_today }}</h2>
+                <p>Завершено</p>
+            </div>
+        </div>
+
+        {% if next_appointment %}
+            <p><strong>Ближайший пациент:</strong> {{ next_appointment.patient_name }} в {{ next_appointment.time }}</p>
+        {% else %}
+            <p>На сегодня ближайших записей нет.</p>
+        {% endif %}
+
+        <a href="{% url 'logout' %}" class="btn">Выйти из аккаунта</a>
+    </div>
+</body>
+</html>

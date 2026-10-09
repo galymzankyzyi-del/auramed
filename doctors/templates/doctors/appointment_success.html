@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Запись подтверждена — AuraMed</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f9fc; text-align: center; padding-top: 100px; }
+        .card { background: white; max-width: 500px; margin: 0 auto; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.07); }
+        .icon { font-size: 60px; margin-bottom: 20px; }
+        h1 { color: #159a9c; margin-bottom: 15px; }
+        p { color: #667085; line-height: 1.6; margin-bottom: 25px; }
+        .btn { display: inline-block; padding: 12px 25px; background: #159a9c; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">✅</div>
+        <h1>Вы успешно записаны!</h1>
+        <p>
+            Спасибо, <strong>{{ appointment.patient_name }}</strong>!<br>
+            Запись к врачу <strong>{{ appointment.doctor.name }}</strong> на <strong>{{ appointment.date }}</strong> в <strong>{{ appointment.time }}</strong> оформлена.
+        </p>
+        <a href="/" class="btn">На главную</a>
+    </div>
+</body>
+</html>

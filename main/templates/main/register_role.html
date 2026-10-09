@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Выбор роли — AuraMed</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f9fc; text-align: center; padding-top: 80px; }
+        .card-container { display: flex; justify-content: center; gap: 30px; margin-top: 40px; }
+        .role-card {
+            background: white; padding: 40px; border-radius: 20px; width: 220px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.07); text-decoration: none; color: #1d2939;
+            transition: transform 0.2s;
+        }
+        .role-card:hover { transform: translateY(-5px); }
+        .icon { font-size: 50px; margin-bottom: 15px; }
+        h3 { color: #159a9c; }
+    </style>
+</head>
+<body>
+
+    <h1>Зарегистрироваться как</h1>
+
+    <div class="card-container">
+        <a href="{% url 'register_by_role' 'patient' %}" class="role-card">
+            <div class="icon">👤</div>
+            <h3>Пациент</h3>
+            <p>Запись к врачам, просмотр истории</p>
+        </a>
+
+        <a href="{% url 'register_by_role' 'doctor' %}" class="role-card">
+            <div class="icon">👨‍⚕️</div>
+            <h3>Врач</h3>
+            <p>Управление расписанием и приёмами</p>
+        </a>
+    </div>
+
+</body>
+</html>

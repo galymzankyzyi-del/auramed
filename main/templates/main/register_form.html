@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация — AuraMed</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f9fc; padding: 50px 0; }
+        .form-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.07); }
+        h2 { color: #159a9c; margin-bottom: 20px; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #d0d5dd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #159a9c; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="form-card">
+        <h2>Регистрация ({% if role == 'doctor' %}Врач{% else %}Пациент{% endif %})</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+    </div>
+</body>
+</html>

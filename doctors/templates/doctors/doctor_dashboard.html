@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель врача — {{ doctor.name }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f8; color: #1d2939; }
+
+        header {
+            background: white; padding: 20px 8%;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .logo { font-size: 26px; font-weight: bold; color: #159a9c; }
+        nav a { text-decoration: none; color: #344054; margin-left: 20px; font-weight: 500; }
+
+        .dashboard-container {
+            width: 90%; max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .doctor-card-info {
+            background: white; border-radius: 16px; padding: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px;
+        }
+        .doctor-card-info h1 { font-size: 24px; color: #117a7c; margin-bottom: 5px; }
+        .doctor-card-info p { color: #667085; }
+
+        .filter-section {
+            background: white; border-radius: 12px; padding: 20px;
+            display: flex; gap: 15px; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 25px;
+        }
+        .filter-section input[type="date"] {
+            padding: 10px 14px; border: 1px solid #d0d5dd; border-radius: 8px; font-size: 15px;
+        }
+        .filter-btn {
+            padding: 10px 20px; background: #159a9c; color: white; border: none;
+            border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none;
+        }
+
+        .table-container {
+            background: white; border-radius: 16px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow-x: auto;
+        }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 14px 16px; border-bottom: 1px solid #eaecf0; }
+        th { background: #f9fafb; color: #475467; font-size: 14px; }
+        
+        .status-badge {
+            display: inline-block; padding: 6px 12px; border-radius: 20px;
+            font-size: 13px; font-weight: bold;
+        }
+        .status-pending { background: #fef0c7; color: #dc6803; }
+        .status-completed { background: #d1fadf; color: #039855; }
+        .status-cancelled { background: #fecdca; color: #d92d20; }
+
+        .action-select {
+            padding: 6px 10px; border-radius: 6px; border: 1px solid #d0d5dd; outline: none;
+        }
+        .empty-text { text-align: center; color: #667085; padding: 30px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">AuraMed — Кабинет врача</div>
+    <nav>
+        <a href="/">Главная</a>
+        <a href="/doctors/">Список врачей</a>
+    </nav>
+</header>
+
+<div class="dashboard-container">
+    
+    <!-- Карточка врача -->
+    <div class="doctor-card-info">
+        <div>
+            <h1>👨‍⚕️ {{ doctor.name }}</h1>
+            <p>Специализация: <strong>{{ doctor.specialization }}</strong> | График: {{ doctor.work_start|time:"H:i" }} - {{ doctor.work_end|time:"H:i" }}</p>
+        </div>
+        <a href="{% url 'doctor_detail' doctor.id %}" class="filter-btn" style="background: #344054;">Профиль публичный</a>
+    </div>
+
+    <!-- Фильтр по дате -->
+    <div class="filter-section">
+        <form method="GET" style="display: flex; gap: 10px; align-items: center;">
+            <label for="date"><strong>Дата приёмов:</strong></label>
+            <input type="date" id="date" name="date" value="{{ selected_date }}">
+            <button type="submit" class="filter-btn">Показать</button>
+        </form>
+        <a href="?date={{ today }}" class="filter-btn" style="background: #e0f2f1; color: #159a9c;">Сегодня</a>
+    </div>
+
+    <!-- Таблица пациентов -->
+    <div class="table-container">
+        <h2>Журнал записей на {{ selected_date }}</h2>
+        <br>
+        {% if appointments %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Время</th>
+                        <th>Пациент</th>
+                        <th>Телефон</th>
+                        <th>Жалобы / Комментарий</th>
+                        <th>Статус</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in appointments %}
+                        <tr>
+                            <td><strong>{{ app.time|time:"H:i" }}</strong></td>
+                            <td>{{ app.patient_name }}</td>
+                            <td><a href="tel:{{ app.patient_phone }}" style="color: #159a9c; text-decoration: none;">{{ app.patient_phone }}</a></td>
+                            <td>{{ app.comment|default:"—" }}</td>
+                            <td>
+                                {% if app.status == 'pending' %}
+                                    <span class="status-badge status-pending">Ожидает</span>
+                                {% elif app.status == 'completed' %}
+                                    <span class="status-badge status-completed">Завершён</span>
+                                {% else %}
+                                    <span class="status-badge status-cancelled">Отменён</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form method="POST" action="{% url 'update_appointment_status' app.id %}" style="display: flex; gap: 5px;">
+                                    {% csrf_token %}
+                                    <select name="status" class="action-select" onchange="this.form.submit()">
+                                        <option value="pending" {% if app.status == 'pending' %}selected{% endif %}>Ожидает</option>
+                                        <option value="completed" {% if app.status == 'completed' %}selected{% endif %}>Принят ✅</option>
+                                        <option value="cancelled" {% if app.status == 'cancelled' %}selected{% endif %}>Отмена ❌</option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-text">
+                <h3>Записей на эту дату нет ☕</h3>
+                <p>Выберите другую дату в календаре выше.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>
