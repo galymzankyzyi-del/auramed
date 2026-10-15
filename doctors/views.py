@@ -25,22 +25,26 @@ def doctor_detail(request, doctor_id):
 
 
 # 3. Редактирование профиля врача
+# 3. Редактирование профиля врача
 @user_passes_test(is_admin_or_doctor)
 def edit_profile(request):
-    # Получаем профиль текущего авторизованного врача
     doctor = get_object_or_404(Doctor, user=request.user)
 
     if request.method == 'POST':
-        doctor.name = request.POST.get('name')
-        doctor.specialization = request.POST.get('specialization')
-        doctor.experience = request.POST.get('experience')
-        doctor.phone = request.POST.get('phone')
+        doctor.name = request.POST.get('name', doctor.name)
+        doctor.specialization = request.POST.get('specialization', doctor.specialization)
+        doctor.experience = request.POST.get('experience', doctor.experience)
+        doctor.phone = request.POST.get('phone', doctor.phone)
+        doctor.description = request.POST.get('description', doctor.description)
+        
+        # Обработка загрузки фотографии
+        if 'image' in request.FILES:
+            doctor.image = request.FILES['image']
+            
         doctor.save()
         return redirect('doctor_dashboard', doctor_id=doctor.id)
 
-    # ИЗМЕНЕНИЕ СДЕСЬ: указываем правильное имя созданного вами файла edit_profile.html
     return render(request, 'doctors/edit_profile.html', {'doctor': doctor})
-
 
 # 4. Онлайн-запись на приём
 # 4. Онлайн-запись на приём

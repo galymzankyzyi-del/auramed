@@ -4,44 +4,62 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="bento-card p-4 p-md-5">
-            
-            <!-- Заголовок -->
-            <div class="text-center mb-4">
-                <div class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center mb-3 shadow-sm" style="width: 70px; height: 70px; background: rgba(79, 70, 229, 0.1);">
-                    <i class="fas fa-user-edit fs-2 text-primary"></i>
-                </div>
-                <h2 class="fw-bold m-0" style="letter-spacing: -0.5px;">Настройка профиля</h2>
-                <p class="text-muted small mt-1">Обновите ваши профессиональные данные и информацию о себе</p>
-            </div>
+    <div class="col-lg-8">
+        
+        <!-- Ссылка назад -->
+        <div class="mb-4">
+            <a href="{% url 'doctor_dashboard' doctor.id %}" class="text-decoration-none text-muted fw-semibold d-inline-flex align-items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Назад в кабинет
+            </a>
+        </div>
 
-            <!-- Форма редактирования -->
+        <div class="bento-card p-4 p-md-5 bg-white rounded-4 shadow-sm border border-light">
+            <h1 class="fw-bold mb-4" style="letter-spacing: -1px; color: #111827;">Редактирование профиля</h1>
+
+            <!-- ВАЖНО: enctype="multipart/form-data" необходим для загрузки файлов/фото -->
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger rounded-4 py-2 small mb-3">
-                        {{ form.non_field_errors }}
-                    </div>
-                {% endif %}
-
-                <!-- Рендерим поля формы через Bootstrap стили -->
                 <div class="mb-3">
-                    {{ form.as_p }}
+                    <label for="name" class="form-label fw-semibold text-dark">ФИО врача</label>
+                    <input type="text" class="form-control rounded-4 py-3 px-3 border-light bg-light" id="name" name="name" value="{{ doctor.name }}" required>
                 </div>
 
-                <div class="d-grid gap-2 mt-4">
-                    <button type="submit" class="btn btn-dark rounded-pill py-3 fw-semibold shadow-sm">
-                        Сохранить изменения
-                    </button>
-                    <a href="{% url 'doctor_dashboard' doctor.id %}" class="btn btn-outline-secondary rounded-pill py-2 fw-semibold border-0">
-                        Отменить и вернуться в кабинет
-                    </a>
+                <div class="mb-3">
+                    <label for="specialization" class="form-label fw-semibold text-dark">Специализация</label>
+                    <input type="text" class="form-control rounded-4 py-3 px-3 border-light bg-light" id="specialization" name="specialization" value="{{ doctor.specialization }}" required>
                 </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="experience" class="form-label fw-semibold text-dark">Опыт работы (лет)</label>
+                        <input type="number" class="form-control rounded-4 py-3 px-3 border-light bg-light" id="experience" name="experience" value="{{ doctor.experience }}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label fw-semibold text-dark">Номер телефона</label>
+                        <input type="text" class="form-control rounded-4 py-3 px-3 border-light bg-light" id="phone" name="phone" value="{{ doctor.phone }}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label fw-semibold text-dark">Фотография врача</label>
+                    <input type="file" class="form-control rounded-4 py-3 px-3 border-light bg-light" id="image" name="image">
+                    {% if doctor.image %}
+                        <div class="form-text mt-2">Текущее фото: {{ doctor.image.name }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="description" class="form-label fw-semibold text-dark">О себе / Описание</label>
+                    <textarea class="form-control rounded-4 py-3 px-3 border-light bg-light" id="description" name="description" rows="3">{{ doctor.description }}</textarea>
+                </div>
+
+                <button type="submit" class="btn w-100 py-3 fw-bold text-white rounded-pill shadow-sm" style="background-color: #0f172a; transition: all 0.2s;">
+                    <i class="fas fa-save me-2"></i> Сохранить изменения
+                </button>
             </form>
-
         </div>
+
     </div>
 </div>
 {% endblock %}
