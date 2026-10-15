@@ -1,0 +1,109 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Услуги и программы — AuraMed{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    
+    <!-- Шапка раздела -->
+    <div class="col-12">
+        <div class="bento-card py-5 px-4 text-center position-relative overflow-hidden" 
+             style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(238,242,255,0.85) 100%);">
+            <span class="badge px-3 py-2 rounded-pill mb-3 fw-medium" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+                💎 Премиальная медицина
+            </span>
+            <h1 class="fw-bold display-5 mb-3" style="letter-spacing: -1.5px;">Эко-программы и услуги</h1>
+            <p class="text-muted w-75 mx-auto mb-0 fs-5">
+                Комплексный подход к вашему здоровью: от детальной диагностики до персонального сопровождения ведущими специалистами.
+            </p>
+        </div>
+    </div>
+
+    <!-- Сетка пакетов услуг -->
+    <div class="col-md-4">
+        <div class="bento-card h-100 d-flex flex-column justify-content-between">
+            <div>
+                <div class="rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-4" style="width: 65px; height: 65px;">
+                    <span class="fs-2">❤️</span>
+                </div>
+                <h3 class="fw-bold mb-2">Абсолютное сердце</h3>
+                <p class="text-muted small mb-4">
+                    Глубокий кардио-скрининг, ЭКГ-мониторинг, расширенная лабораторная диагностика и консультация главного кардиолога.
+                </p>
+                <ul class="list-unstyled text-muted small mb-4">
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Экспресс-анализ ритма</li>
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Персональный план нагрузок</li>
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Повторный приём включен</li>
+                </ul>
+            </div>
+            <div>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small">Стоимость пакета</span>
+                    <span class="fw-bold fs-5 text-primary">от 45 000 ₸</span>
+                </div>
+                <a href="{% url 'doctor_list' %}" class="btn-bento-primary w-100 text-decoration-none d-block py-2 text-center">
+                    Выбрать программу
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="bento-card h-100 d-flex flex-column justify-content-between" style="border: 2px solid rgba(79, 70, 229, 0.3);">
+            <div>
+                <span class="badge bg-primary text-white px-3 py-1 rounded-pill mb-3">Хит программы</span>
+                <div class="rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-4" style="width: 65px; height: 65px;">
+                    <span class="fs-2">⚡</span>
+                </div>
+                <h3 class="fw-bold mb-2">Энергия и сон</h3>
+                <p class="text-muted small mb-4">
+                    Программа восстановления жизненных сил, коррекция хронической усталости и улучшение качества ночного отдыха.
+                </p>
+                <ul class="list-unstyled text-muted small mb-4">
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Чек-ап микроэлементов</li>
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Консультация сомнолога</li>
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Трекинг восстановления</li>
+                </ul>
+            </div>
+            <div>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small">Стоимость пакета</span>
+                    <span class="fw-bold fs-5 text-primary">от 38 000 ₸</span>
+                </div>
+                <a href="{% url 'doctor_list' %}" class="btn-bento-primary w-100 text-decoration-none d-block py-2 text-center">
+                    Выбрать программу
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="bento-card h-100 d-flex flex-column justify-content-between">
+            <div>
+                <div class="rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-4" style="width: 65px; height: 65px;">
+                    <span class="fs-2">🛡️</span>
+                </div>
+                <h3 class="fw-bold mb-2">Терапия 24/7</h3>
+                <p class="text-muted small mb-4">
+                    Постоянное медицинское сопровождение, оперативная связь с дежурным врачом и полный контроль вашего здоровья.
+                </p>
+                <ul class="list-unstyled text-muted small mb-4">
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Безлимитный чат с врачом</li>
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Срочные видеоконсультации</li>
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Электронная медкнижка</li>
+                </ul>
+            </div>
+            <div>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small">Стоимость пакета</span>
+                    <span class="fw-bold fs-5 text-primary">от 25 000 ₸/мес</span>
+                </div>
+                <a href="{% url 'doctor_list' %}" class="btn-bento-primary w-100 text-decoration-none d-block py-2 text-center">
+                    Подключить
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

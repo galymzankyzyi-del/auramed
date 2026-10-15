@@ -1,25 +1,67 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Регистрация — AuraMed</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f5f9fc; padding: 50px 0; }
-        .form-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.07); }
-        h2 { color: #159a9c; margin-bottom: 20px; text-align: center; }
-        .form-group { margin-bottom: 15px; }
-        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #d0d5dd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #159a9c; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-    </style>
-</head>
-<body>
-    <div class="form-card">
-        <h2>Регистрация ({% if role == 'doctor' %}Врач{% else %}Пациент{% endif %})</h2>
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Зарегистрироваться</button>
-        </form>
+{% extends 'main/base.html' %}
+
+{% block title %}Регистрация — AuraMed{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-md-6 col-lg-5">
+        <div class="bento-card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <span class="badge px-3 py-2 rounded-pill mb-2 fw-medium" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+                    Создание аккаунта
+                </span>
+                <h3 class="fw-bold mb-1" style="letter-spacing: -0.5px;">
+                    {% if role == 'doctor' %}Регистрация (Врач){% else %}Регистрация (Пациент){% endif %}
+                </h3>
+                <p class="text-muted small">Заполните данные для доступа к платформе</p>
+            </div>
+
+            <form method="post" class="text-start">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label small text-muted fw-semibold ms-1">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <div class="form-text text-muted extra-small ms-1">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="text-danger small mt-1 ms-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn-bento-primary w-100 py-2.5 mt-3 text-center">
+                    Зарегистрироваться
+                </button>
+            </form>
+
+            <div class="text-center pt-3 mt-3 border-top border-light">
+                <span class="text-muted small">Уже есть аккаунт?</span>
+                <a href="{% url 'login' %}" class="text-primary fw-semibold small text-decoration-none ms-1">Войти</a>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</div>
+
+<style>
+  /* Автоматическое стилизация инпутов стандартной формы Django */
+  form input[type="text"], 
+  form input[type="password"], 
+  form input[type="email"], 
+  form select, 
+  form textarea {
+    width: 100%;
+    border-radius: 99px;
+    padding: 10px 18px;
+    border: none !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    font-size: 0.95rem;
+  }
+  form textarea {
+    border-radius: 20px !important;
+  }
+</style>
+{% endblock %}

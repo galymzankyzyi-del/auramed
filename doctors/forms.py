@@ -38,3 +38,5 @@ class DoctorProfileForm(forms.ModelForm):
             ),
             'image': forms.FileInput(attrs={'class': 'form-file'}),
         }
+
+        

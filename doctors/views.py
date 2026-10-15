@@ -7,31 +7,27 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import Appointment, Doctor
 
 
-# Проверка: является ли пользователь админом
-def is_admin(user):
-    return user.is_authenticated and (user.is_superuser or user.is_staff)
+# Проверка: является ли пользователь админом или врачом
+def is_admin_or_doctor(user):
+    return user.is_authenticated and (user.is_superuser or user.is_staff or hasattr(user, 'doctor_profile'))
 
 
 # 1. Список врачей
 def doctor_list(request):
     doctors = Doctor.objects.all()
-    return render(
-        request, 'doctors/doctor_list.html', {'doctors': doctors}
-    )
+    return render(request, 'doctors/doctor_list.html', {'doctors': doctors})
 
 
 # 2. Детальная страница врача
 def doctor_detail(request, doctor_id):
     doctor = get_object_or_404(Doctor, id=doctor_id)
-    return render(
-        request, 'doctors/doctor_detail.html', {'doctor': doctor}
-    )
+    return render(request, 'doctors/doctor_detail.html', {'doctor': doctor})
 
 
-# 3. Редактирование профиля (только для админа)
-@user_passes_test(is_admin)
+# 3. Редактирование профиля врача
+@user_passes_test(is_admin_or_doctor)
 def edit_profile(request):
-    # Если редактируем профиль авторизованного врача
+    # Получаем профиль текущего авторизованного врача
     doctor = get_object_or_404(Doctor, user=request.user)
 
     if request.method == 'POST':
@@ -40,13 +36,13 @@ def edit_profile(request):
         doctor.experience = request.POST.get('experience')
         doctor.phone = request.POST.get('phone')
         doctor.save()
-        return redirect('doctor_detail', doctor_id=doctor.id)
+        return redirect('doctor_dashboard', doctor_id=doctor.id)
 
-    return render(
-        request, 'doctors/edit_doctor_profile.html', {'doctor': doctor}
-    )
+    # ИЗМЕНЕНИЕ СДЕСЬ: указываем правильное имя созданного вами файла edit_profile.html
+    return render(request, 'doctors/edit_profile.html', {'doctor': doctor})
 
 
+# 4. Онлайн-запись на приём
 # 4. Онлайн-запись на приём
 def book_appointment(request, doctor_id):
     doctor = get_object_or_404(Doctor, id=doctor_id)
@@ -55,8 +51,32 @@ def book_appointment(request, doctor_id):
         patient_name = request.POST.get('patient_name')
         patient_phone = request.POST.get('patient_phone')
         date_val = request.POST.get('date')
-        time_val = request.POST.get('time')
+        time_str = request.POST.get('time')
         comment = request.POST.get('comment', '')
+
+        # Проверяем, передано ли время
+        if not time_str or not date_val:
+            return render(
+                request,
+                'doctors/appointment_form.html',
+                {
+                    'doctor': doctor,
+                    'error': 'Пожалуйста, выберите дату и время приёма.',
+                },
+            )
+
+        # Конвертируем строку времени (например, "09:00") в объект time для базы данных
+        try:
+            time_val = datetime.strptime(time_str, '%H:%M').time()
+        except ValueError:
+            return render(
+                request,
+                'doctors/appointment_form.html',
+                {
+                    'doctor': doctor,
+                    'error': 'Неверный формат времени.',
+                },
+            )
 
         # Защита от дублирования записи на одно время
         if Appointment.objects.filter(
@@ -71,7 +91,9 @@ def book_appointment(request, doctor_id):
                 },
             )
 
+        # Создаем запись с привязкой текущего юзера (если он авторизован)
         appointment = Appointment.objects.create(
+            patient_user=request.user if request.user.is_authenticated else None,
             doctor=doctor,
             patient_name=patient_name,
             patient_phone=patient_phone,
@@ -86,11 +108,7 @@ def book_appointment(request, doctor_id):
             {'appointment': appointment},
         )
 
-    return render(
-        request, 'doctors/appointment_form.html', {'doctor': doctor}
-    )
-
-
+    return render(request, 'doctors/appointment_form.html', {'doctor': doctor})
 # 5. AJAX-слоты времени для календаря
 def get_available_slots(request, doctor_id):
     doctor = get_object_or_404(Doctor, id=doctor_id)

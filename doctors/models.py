@@ -10,9 +10,6 @@ class Doctor(models.Model):
         null=True,
         blank=True,
     )
-    image = models.ImageField(
-        verbose_name='Фотография', upload_to='doctors/', blank=True, null=True
-    )
     name = models.CharField('ФИО', max_length=100)
     specialization = models.CharField('Специализация', max_length=100)
     experience = models.IntegerField('Опыт работы (лет)', default=0)
@@ -28,8 +25,8 @@ class Doctor(models.Model):
     def __str__(self):
         return f'{self.name} ({self.specialization})'
 
+
 class Appointment(models.Model):
-    # По желанию можно привязать и пациента к записи
     patient_user = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -45,6 +42,7 @@ class Appointment(models.Model):
     date = models.DateField('Дата приёма')
     time = models.TimeField('Время приёма')
     comment = models.TextField('Комментарий / Жалобы', blank=True)
+    
     STATUS_CHOICES = [
         ('pending', 'Ожидает'),
         ('completed', 'Завершён'),

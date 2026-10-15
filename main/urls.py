@@ -14,4 +14,8 @@ urlpatterns = [
     ),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('services/', views.services_view, name='services'),
+    path('register/patient/', views.register_patient, name='register_patient'),
+    path('register/doctor/', views.register_doctor, name='register_doctor'),
+
 ]

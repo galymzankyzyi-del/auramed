@@ -1,153 +1,129 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Запись к врачу — {{ doctor.name }}</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f9fc; color: #1d2939; }
-        header {
-            background: white; padding: 20px 8%;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .logo { font-size: 28px; font-weight: bold; color: #159a9c; }
-        nav a { text-decoration: none; color: #344054; margin-left: 25px; }
+{% extends 'main/base.html' %}
 
-        .container {
-            width: 90%; max-width: 650px;
-            margin: 50px auto; background: white;
-            border-radius: 20px; padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.07);
-        }
-        h1 { font-size: 28px; margin-bottom: 10px; color: #117a7c; }
-        p.subtitle { color: #667085; margin-bottom: 25px; }
+{% block title %}Запись на приём — {{ doctor.name|default:doctor.user.username }} — AuraMed{% endblock %}
 
-        .error-message {
-            background: #fecdca; color: #b42318;
-            padding: 12px 15px; border-radius: 8px;
-            margin-bottom: 20px; font-weight: bold;
-        }
-
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: #344054; }
-        input, textarea {
-            width: 100%; padding: 12px 15px;
-            border: 1px solid #d0d5dd; border-radius: 8px;
-            font-size: 16px; outline: none;
-        }
-        input:focus, textarea:focus { border-color: #159a9c; }
-
-        /* Сетка слотов времени */
-        .slots-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .slot-btn {
-            padding: 10px;
-            border: 1px solid #159a9c;
-            background: white;
-            color: #159a9c;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-        }
-        .slot-btn:hover:not(.disabled) {
-            background: #159a9c;
-            color: white;
-        }
-        .slot-btn.selected {
-            background: #117a7c;
-            color: white;
-            border-color: #117a7c;
-            box-shadow: 0 0 0 2px #b2dddd;
-        }
-        .slot-btn.disabled {
-            background: #f2f4f7;
-            border-color: #eaecf0;
-            color: #98a2b3;
-            cursor: not-allowed;
-            text-decoration: line-through;
-        }
-
-        .submit-btn {
-            width: 100%; padding: 15px;
-            background: #159a9c; color: white;
-            border: none; border-radius: 10px;
-            font-size: 18px; font-weight: bold;
-            cursor: pointer; margin-top: 15px;
-        }
-        .submit-btn:hover { background: #117a7c; }
-        .back-link { display: inline-block; margin-top: 20px; color: #159a9c; text-decoration: none; }
-    </style>
-</head>
-<body>
-
-<header>
-    <div class="logo">AuraMed</div>
-    <nav>
-        <a href="/">Главная</a>
-        <a href="/doctors/">Врачи</a>
-    </nav>
-</header>
-
-<div class="container">
-    <h1>Запись на приём</h1>
-    <p class="subtitle">Врач: <strong>{{ doctor.name }}</strong> ({{ doctor.specialization }})<br>
-       График работы: {{ doctor.work_start|time:"H:i" }} — {{ doctor.work_end|time:"H:i" }}</p>
-
-    {% if error %}
-        <div class="error-message">{{ error }}</div>
-    {% endif %}
-
-    <form method="POST" id="appointmentForm">
-        {% csrf_token %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
         
-        <div class="form-group">
-            <label for="patient_name">Ваше имя и фамилия</label>
-            <input type="text" id="patient_name" name="patient_name" required placeholder="Например: Арман Сериков">
+        <!-- Ссылка назад -->
+        <div class="mb-4">
+            <a href="{% url 'doctor_detail' doctor.id %}" class="text-decoration-none text-muted fw-semibold d-inline-flex align-items-center gap-2 transition-all hover-primary">
+                <i class="fas fa-arrow-left"></i> Назад к профилю врача
+            </a>
         </div>
 
-        <div class="form-group">
-            <label for="patient_phone">Номер телефона</label>
-            <input type="tel" 
-           id="patient_phone" 
-           name="patient_phone" 
-           required 
-           placeholder="+7 701 000 00 00 " 
-           maxlength="16">
-        </div>
+        <!-- Главная Bento-карточка формы -->
+        <div class="bento-card p-4 p-md-5 position-relative overflow-hidden shadow-sm border border-light rounded-4 bg-white">
+            
+            <!-- Декоративный фоновый элемент -->
+            <div class="position-absolute top-0 end-0 translate-middle-y rounded-circle bg-primary opacity-10 blur-3xl" style="width: 250px; height: 250px; z-index: 0;"></div>
 
-        <div class="form-group">
-            <label for="date">Выберите дату приёма</label>
-            <input type="date" id="date" name="date" required min="2026-01-01">
-        </div>
+            <div class="position-relative" style="z-index: 1;">
+                
+                <h1 class="fw-bold mb-2" style="letter-spacing: -1px; font-size: 2rem; color: #111827;">
+                    Запись на приём
+                </h1>
+                <p class="text-muted mb-4 fs-6">
+                    Врач: <strong class="text-dark">{{ doctor.name|default:doctor.user.username }}</strong> {% if doctor.specialization %}({{ doctor.specialization }}){% endif %}<br>
+                    График работы: {{ doctor.work_start|time:"H:i"|default:"09:00" }} — {{ doctor.work_end|time:"H:i"|default:"18:00" }}
+                </p>
 
-        <!-- Скрытое поле для передачи выбранного времени -->
-        <input type="hidden" id="time" name="time" required>
+                {% if error %}
+                    <div class="alert alert-danger rounded-4 py-3 px-4 mb-4 fw-semibold" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i> {{ error }}
+                    </div>
+                {% endif %}
 
-        <div class="form-group">
-            <label>Доступное время приёма</label>
-            <div id="slots-wrapper">
-                <p style="color: #667085; font-size: 14px;">Сначала выберите дату, чтобы увидеть свободное время.</p>
+                <form method="POST" id="appointmentForm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="patient_name" class="form-label fw-semibold text-dark">Ваше имя и фамилия</label>
+                        <input type="text" class="form-control rounded-4 py-3 px-3 border-light bg-light" id="patient_name" name="patient_name" required placeholder="Например: Арман Сериков" value="{{ request.user.get_full_name }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="patient_phone" class="form-label fw-semibold text-dark">Номер телефона</label>
+                        <input type="tel" class="form-control rounded-4 py-3 px-3 border-light bg-light" id="patient_phone" name="patient_phone" required placeholder="+7 701 000 00 00" maxlength="16">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="date" class="form-label fw-semibold text-dark">Выберите дату приёма</label>
+                        <input type="date" class="form-control rounded-4 py-3 px-3 border-light bg-light" id="date" name="date" required>
+                    </div>
+
+                    <!-- Скрытое поле для передачи выбранного времени -->
+                    <input type="hidden" id="time" name="time" required>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark">Доступное время приёма</label>
+                        <div id="slots-wrapper" class="p-3 bg-light rounded-4 border border-light">
+                            <p class="text-muted mb-0" style="font-size: 14px;">Сначала выберите дату, чтобы увидеть свободное время.</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="comment" class="form-label fw-semibold text-dark">Причина обращения / Жалобы (необязательно)</label>
+                        <textarea class="form-control rounded-4 py-3 px-3 border-light bg-light" id="comment" name="comment" rows="3" placeholder="Опишите коротко свои симптомы"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn w-100 py-3 fw-bold text-white rounded-pill shadow-sm" style="background-color: #0f172a; transition: all 0.2s;">
+                        <i class="fas fa-check-circle me-2"></i> Подтвердить запись
+                    </button>
+                </form>
+
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="comment">Причина обращения / Жалобы (необязательно)</label>
-            <textarea id="comment" name="comment" rows="3" placeholder="Опишите коротко свои симптомы"></textarea>
-        </div>
-
-        <button type="submit" class="submit-btn">Подтвердить запись</button>
-    </form>
-
-    <a href="{% url 'doctor_detail' doctor.id %}" class="back-link">← Назад к профилю врача</a>
+    </div>
 </div>
+
+<style>
+    /* Стили для сетки слотов времени в единой стилистике */
+    .slots-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        gap: 10px;
+    }
+    .slot-btn {
+        padding: 10px;
+        border: 1.5px solid #0f172a;
+        background: white;
+        color: #0f172a;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+    .slot-btn:hover:not(.disabled) {
+        background: #0f172a;
+        color: white;
+    }
+    .slot-btn.selected {
+        background: #0f172a;
+        color: white;
+        border-color: #0f172a;
+        box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.15);
+    }
+    .slot-btn.disabled {
+        background: #f1f5f9;
+        border-color: #e2e8f0;
+        color: #94a3b8;
+        cursor: not-allowed;
+        text-decoration: line-through;
+    }
+    .form-control:focus {
+        border-color: #0f172a !important;
+        box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.1) !important;
+        background-color: #fff !important;
+    }
+    button[type="submit"]:hover {
+        background-color: #1e293b !important;
+    }
+</style>
 
 <script>
     const dateInput = document.getElementById('date');
@@ -162,7 +138,7 @@
         const selectedDate = this.value;
         if (!selectedDate) return;
 
-        slotsWrapper.innerHTML = '<p style="color: #667085;">Загрузка расписания...</p>';
+        slotsWrapper.innerHTML = '<p class="text-muted mb-0" style="font-size: 14px;">Загрузка расписания...</p>';
         hiddenTimeInput.value = '';
 
         fetch(`/doctors/{{ doctor.id }}/slots/?date=${selectedDate}`)
@@ -180,11 +156,11 @@
                     gridHtml += '</div>';
                     slotsWrapper.innerHTML = gridHtml;
                 } else {
-                    slotsWrapper.innerHTML = '<p style="color: #b42318;">На выбранную дату нет доступных слотов.</p>';
+                    slotsWrapper.innerHTML = '<p class="text-danger mb-0" style="font-size: 14px;">На выбранную дату нет доступных слотов.</p>';
                 }
             })
             .catch(err => {
-                slotsWrapper.innerHTML = '<p style="color: #b42318;">Ошибка при загрузке слотов.</p>';
+                slotsWrapper.innerHTML = '<p class="text-danger mb-0" style="font-size: 14px;">Ошибка при загрузке слотов.</p>';
             });
     });
 
@@ -196,14 +172,12 @@
 
     const phoneInput = document.getElementById('patient_phone');
 
-// При клике или фокусе автоматический подставляем "+7 "
     phoneInput.addEventListener('focus', function() {
         if (!phoneInput.value) {
-        phoneInput.value = '+7 ';
-    }
-});
+            phoneInput.value = '+7 ';
+        }
+    });
 
-// Автоматическое форматирование при вводе: +7 XXX XXX XX XX
     phoneInput.addEventListener('input', function(e) {
         let matrix = '+7 ___ ___ __ __';
         let i = 0;
@@ -211,21 +185,18 @@
         let val = this.value.replace(/\D/g, '');
 
         if (def.length >= val.length) {
-        val = def;
+            val = def;
         }
 
         this.value = matrix.replace(/./g, function(a) {
             return /[_\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? '' : a;
         });
-});
+    });
 
-// Если пользователь ничего не ввел и убрал фокус — очищаем
     phoneInput.addEventListener('blur', function() {
         if (phoneInput.value === '+7 ') {
             phoneInput.value = '';
         }
-});
+    });
 </script>
-
-</body>
-</html>
+{% endblock %}

@@ -1,245 +1,56 @@
-<!DOCTYPE html>
-<html lang="ru">
+{% extends 'main/base.html' %}
 
-<head>
-    <meta charset="UTF-8">
+{% block title %}Наши врачи — AuraMed{% endblock %}
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Врачи — AuraMed</title>
-
-    <style>
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f9fc;
-            color: #1d2939;
-        }
-
-        header {
-            background: white;
-            padding: 20px 8%;
-
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: #159a9c;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #344054;
-            margin-left: 25px;
-        }
-
-        .container {
-            width: 84%;
-            margin: 50px auto;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 38px;
-        }
-
-        .doctors {
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
-            gap: 25px;
-        }
-
-        .doctor-card {
-            background: white;
-
-            padding: 30px;
-
-            border-radius: 15px;
-
-            text-align: center;
-
-            box-shadow:
-                0 5px 20px
-                rgba(0,0,0,0.06);
-
-            transition: 0.3s;
-        }
-
-        .doctor-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .doctor-button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 25px;
-
-            background: #159a9c;
-            color: white;
-
-            text-decoration: none;
-
-            border-radius: 8px;
-
-            font-weight: bold;
-}
-
-.doctor-button:hover {
-    background: #117a7c;
-}
-
-        .doctor-photo {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: #e8fafa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-            margin: 0 auto 20px auto;
-            overflow: hidden; /* Чтобы изображение идеально обрезалось по кругу */
-        }
-
-        .doctor-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Заполняет кружочек без искажения пропорций */
-        }
-
-        .doctor-card h2 {
-            margin-bottom: 10px;
-        }
-
-        .specialization {
-            color: #159a9c;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .experience {
-            color: #667085;
-            margin-bottom: 10px;
-        }
-
-        .phone {
-            color: #667085;
-        }
-
-        @media (max-width: 800px) {
-
-            .doctors {
-                grid-template-columns: 1fr;
-            }
-
-            nav {
-                display: none;
-            }
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-<header>
-
-    <div class="logo">
-        AuraMed
+{% block content %}
+<div class="row g-4">
+    
+    <!-- Заголовок страницы в Bento-стиле -->
+    <div class="col-12">
+        <div class="bento-card py-4 px-5 text-center" style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(238,242,255,0.85) 100%);">
+            <h1 class="fw-bold mb-2" style="letter-spacing: -1px;">Наши специалисты</h1>
+            <p class="text-muted mb-0">Выберите квалифицированного врача и запишитесь на консультацию онлайн</p>
+        </div>
     </div>
 
-    <nav>
+    <!-- Список врачей из базы данных -->
+    {% for doctor in doctors %}
+    <div class="col-md-4">
+        <div class="bento-card h-100 d-flex flex-column justify-content-between text-center">
+            <div>
+                <!-- Аватар врача -->
+                <div class="rounded-circle bg-light mx-auto mb-3 overflow-hidden shadow-sm d-flex align-items-center justify-content-center" style="width: 90px; height: 90px;">
+                    {% if doctor.photo %}
+                        <img src="{{ doctor.photo.url }}" alt="{{ doctor.user.get_full_name }}" class="w-100 h-100 object-fit-cover">
+                    {% else %}
+                        <i class="fas fa-user-md text-secondary fs-2"></i>
+                    {% endif %}
+                </div>
 
-        <a href="/">
-            Главная
-        </a>
+                <h4 class="fw-bold mb-1">{{ doctor.user.get_full_name|default:doctor.user.username }}</h4>
+                <span class="badge px-3 py-1 rounded-pill mb-3" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+                    {{ doctor.specialization|default:"Врач-терапевт" }}
+                </span>
+                
+                <p class="text-muted small px-2 mb-4">
+                    {{ doctor.bio|default:"Опытный специалист с многолетним стажем работы в ведущих клиниках."|truncatechars:80 }}
+                </p>
+            </div>
 
-        <a href="/doctors/">
-            Врачи
-        </a>
-
-    </nav>
-
-</header>
-
-
-<div class="container">
-
-    <h1>
-        Наши врачи
-    </h1>
-
-
-    <div class="doctors">
-
-        {% for doctor in doctors %}
-
-    <div class="doctor-card">
-
-        <div class="doctor-photo">
-            {% if doctor.image %}
-                <img src="{{ doctor.image.url }}" alt="{{ doctor.name }}">
-            {% else %}
-                🩺
-            {% endif %}
+            <div>
+                <a href="{% url 'doctor_detail' doctor.id %}" class="btn-bento-primary w-100 text-decoration-none d-block py-2">
+                    Подробнее / Записаться
+                </a>
+            </div>
         </div>
-
-        <h2>
-            {{ doctor.name }}
-        </h2>
-
-        <div class="specialization">
-            {{ doctor.specialization }}
-        </div>
-
-        <div class="experience">
-            Опыт: {{ doctor.experience }} лет
-        </div>
-
-        <div class="phone">
-            {{ doctor.phone }}
-        </div>
-
-        <a
-            href="{% url 'doctor_detail' doctor.id %}"
-            class="doctor-button"
-        >
-            Подробнее
-        </a>
-
     </div>
-
-{% empty %}
-
-    <p>
-        Пока врачи не добавлены.
-    </p>
-
-{% endfor %}
-
+    {% empty %}
+    <div class="col-12">
+        <div class="bento-card text-center py-5">
+            <h4 class="text-muted mb-0">Пока нет зарегистрированных врачей</h4>
+        </div>
     </div>
+    {% endfor %}
 
 </div>
-
-</body>
-
-</html>
+{% endblock %}

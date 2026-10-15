@@ -1,27 +1,47 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Вход — AuraMed</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f5f9fc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .form-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.07); width: 350px; }
-        h2 { color: #159a9c; margin-bottom: 20px; text-align: center; }
-        form p { margin-bottom: 15px; }
-        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #159a9c; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-    </style>
-</head>
-<body>
+{% extends 'main/base.html' %}
 
-<div class="form-card">
-    <h2>Вход в систему</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Войти</button>
-    </form>
+{% block title %}Вход — AuraMed{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-5 col-lg-4">
+        <div class="bento-card text-center p-4 p-md-5">
+            <div class="rounded-circle bg-primary-subtle text-primary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background: rgba(79, 70, 229, 0.1);">
+                <i class="fas fa-user-lock fs-3" style="color: var(--primary);"></i>
+            </div>
+            
+            <h3 class="fw-bold mb-1" style="letter-spacing: -0.5px;">Вход в систему</h3>
+            <p class="text-muted small mb-4">Добро пожаловать в AuraMed</p>
+
+            <form method="post" class="text-start">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger rounded-4 small p-2 mb-3">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label small text-muted fw-semibold ms-1">Имя пользователя</label>
+                    <input type="text" name="username" class="form-control rounded-pill px-3 py-2 border-0 bg-white shadow-sm" required placeholder="Введите ваш логин">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label small text-muted fw-semibold ms-1">Пароль</label>
+                    <input type="password" name="password" class="form-control rounded-pill px-3 py-2 border-0 bg-white shadow-sm" required placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn-bento-primary w-100 py-2.5 mb-3 text-center">
+                    Войти
+                </button>
+            </form>
+
+            <div class="text-center pt-2 border-top border-light">
+                <span class="text-muted small">Ещё нет аккаунта?</span>
+                <a href="{% url 'register_role_select' %}" class="text-primary fw-semibold small text-decoration-none ms-1">Зарегистрироваться</a>
+            </div>
+        </div>
+    </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AuraMed — Медицинский центр{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Шрифт Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome иконки -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+      :root {
+        --bg-gradient: linear-gradient(135deg, #eaf2ff 0%, #f3e8ff 50%, #e0e7ff 100%);
+        --card-bg: rgba(255, 255, 255, 0.75);
+        --card-border: rgba(255, 255, 255, 0.9);
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --primary: #4f46e5;
+        --shadow-soft: 0 20px 40px -15px rgba(79, 70, 229, 0.08);
+      }
+
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: var(--bg-gradient);
+        background-attachment: fixed;
+        color: var(--text-main);
+        min-height: 100vh;
+        margin: 0;
+        transition: background-color 0.4s ease, color 0.4s ease;
+      }
+
+      .bento-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--card-border);
+        border-radius: 32px;
+        padding: 32px;
+        box-shadow: var(--shadow-soft);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .bento-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.15);
+      }
+
+      .btn-bento-primary {
+        background: #0f172a;
+        color: #ffffff;
+        border-radius: 99px;
+        padding: 12px 28px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.2s ease;
+      }
+
+      .btn-bento-primary:hover {
+        background: #334155;
+        color: #ffffff;
+        transform: scale(1.02);
+      }
+
+      /* === УДАЛЕНИЕ СТАНДАРТНОЙ СТРЕЛКИ И АНИМАЦИЯ === */
+      .dropdown-toggle::after,
+      .dropdown-toggle.no-caret::after {
+          display: none !important;
+          content: none !important;
+      }
+
+      /* Плавное вращение иконки */
+      .dropdown-toggle .fa-chevron-down {
+          transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .dropdown.open .dropdown-toggle .fa-chevron-down {
+          transform: rotate(180deg);
+      }
+
+      /* ГАРАНТИРОВАННАЯ АНИМАЦИЯ ВЫПАДАЮЩЕГО МЕНЮ */
+      .custom-dropdown-menu {
+          display: block !important;
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(-15px) scale(0.95);
+          transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                      visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          pointer-events: none;
+          position: absolute;
+          right: 0;
+          margin-top: 10px;
+          z-index: 1090;
+          list-style: none !important;
+        padding-left: 0 !important;
+        margin-left: 0 !important;
+      }
+
+      .dropdown.open .custom-dropdown-menu {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0) scale(1);
+          pointer-events: auto;
+      }
+
+      /* Стили для темной темы */
+      body.dark-theme {
+          --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #090d16 100%) !important;
+          --card-bg: rgba(15, 23, 42, 0.8) !important;
+          --card-border: rgba(255, 255, 255, 0.1) !important;
+          --text-main: #f8fafc !important;
+          --text-muted: #94a3b8 !important;
+      }
+      body.dark-theme .bg-white {
+          background-color: #1e293b !important;
+          color: #f8fafc !important;
+      }
+      body.dark-theme .text-dark {
+          color: #f8fafc !important;
+      }
+      body.dark-theme .dropdown-menu-bento {
+          background: rgba(15, 23, 42, 0.95) !important;
+          border-color: rgba(255, 255, 255, 0.1) !important;
+      }
+      body.dark-theme .btn-light {
+          background-color: #334155 !important;
+          color: #f8fafc !important;
+          border-color: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      /* Переключатель темы (Светлая / Темная) */
+      .theme-switcher {
+          display: flex;
+          background: rgba(0, 0, 0, 0.05);
+          border-radius: 99px;
+          padding: 4px;
+          gap: 4px;
+          position: relative;
+      }
+      body.dark-theme .theme-switcher {
+          background: rgba(255, 255, 255, 0.1);
+      }
+      .theme-btn {
+          border: none;
+          background: transparent;
+          border-radius: 50px;
+          width: 36px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: var(--text-muted);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .theme-btn.active {
+          background: var(--primary);
+          color: #ffffff;
+          box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+          transform: scale(1.05);
+      }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="container py-4">
+
+    <!-- ЕДИНАЯ СТИЛЬНАЯ ШАПКА -->
+    <header class="d-flex justify-content-between align-items-center mb-5 px-3 py-2 bg-white rounded-pill shadow-sm">
+        <a href="/" class="text-decoration-none d-flex align-items-center gap-2 ms-2">
+            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                <i class="fas fa-heartbeat fs-5"></i>
+            </div>
+            <span class="fw-bold fs-4 text-dark" style="letter-spacing: -0.5px;">AuraMed</span>
+        </a>
+
+        <nav class="d-none d-md-flex gap-4 align-items-center">
+            {% if request.user.is_authenticated and request.user.doctor_profile %}
+                <!-- МЕНЮ ДЛЯ ВРАЧА -->
+                <a href="{% url 'doctor_dashboard' request.user.doctor_profile.id %}" class="text-decoration-none text-dark fw-semibold">Расписание</a>
+                <a href="#" class="text-decoration-none text-secondary">Мои пациенты</a>
+                <a href="{% url 'edit_profile' %}" class="text-decoration-none text-secondary">Профиль</a>
+            {% elif request.user.is_authenticated and request.user.is_staff %}
+                <!-- МЕНЮ ДЛЯ АДМИНА -->
+                <span class="text-muted fw-semibold">Панель администратора</span>
+            {% else %}
+                <!-- МЕНЮ ДЛЯ ПАЦИЕНТОВ И ГОСТЕЙ -->
+                <a href="/" class="text-decoration-none text-secondary fw-semibold">Главная</a>
+                <a href="{% url 'doctor_list' %}" class="text-decoration-none text-secondary fw-semibold">Врачи</a>
+                <a href="{% url 'services' %}" class="text-decoration-none text-secondary fw-semibold">Услуги</a>
+                <a href="#" class="text-decoration-none text-secondary">Контакты</a>
+            {% endif %}
+        </nav>
+
+        <div class="me-2">
+            {% if user.is_authenticated %}
+                <!-- Кастомный дропдаун с управляемой анимацией -->
+                <div class="dropdown position-relative" id="customDropdown">
+                    <button class="btn btn-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 border-0 shadow-sm dropdown-toggle no-caret" 
+                            type="button" onclick="toggleCustomDropdown(event)">
+                        <i class="fas fa-user-circle text-primary fs-5"></i>
+                        <span class="fw-semibold">{{ user.username }}</span>
+                        <i class="fas fa-chevron-down small text-muted ms-1"></i>
+                    </button>
+
+                    <!-- Выпадающее Bento-меню с уникальным классом custom-dropdown-menu -->
+                    <ul class="custom-dropdown-menu dropdown-menu-bento p-3 border-0 shadow-lg" 
+                        style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 24px; min-width: 300px;">
+                        
+                        <!-- Шапка профиля -->
+                        <li class="px-3 py-2 mb-2 border-bottom border-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="d-block small text-muted" style="font-size: 11px;">Врач кабинета</span>
+                                    <span class="fw-bold text-dark">{{ user.username }}</span>
+                                </div>
+                                <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill" style="font-size: 10px;">
+                                    <i class="fas fa-circle text-success me-1" style="font-size: 5px;"></i> Online
+                                </span>
+                            </div>
+                        </li>
+
+                        {% if user.doctor_profile %}
+                            <!-- БЛОК СТАТИСТИКИ -->
+                            <li class="px-3 py-2 mb-2 rounded-4 shadow-sm" style="background: rgba(79, 70, 229, 0.04) !important;" onclick="event.stopPropagation();">
+                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <span class="small fw-bold text-muted" style="font-size: 11px; letter-spacing: 0.5px;">СТАТИСТИКА СЕГОДНЯ</span>
+                                    <i class="fas fa-chart-line text-primary small"></i>
+                                </div>
+                                <div class="d-flex gap-2 text-center mt-2">
+                                    <div class="flex-fill bg-white p-2 rounded-3 shadow-sm border border-light">
+                                        <div class="fw-bold text-primary fs-6">{{ user.doctor_profile.appointments.count|default:"0" }}</div>
+                                        <div class="text-muted" style="font-size: 10px;">Всего записей</div>
+                                    </div>
+                                    <div class="flex-fill bg-white p-2 rounded-3 shadow-sm border border-light">
+                                        <div class="fw-bold text-success fs-6">Активен</div>
+                                        <div class="text-muted" style="font-size: 10px;">Статус кабинета</div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <!-- Ссылки -->
+                            <li>
+                                <a class="dropdown-item rounded-3 py-2 px-3 fw-semibold text-dark d-flex align-items-center justify-content-between mb-1" href="{% url 'doctor_dashboard' user.doctor_profile.id %}">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="fas fa-calendar-alt text-primary"></i> Расписание приемов
+                                    </div>
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill" style="font-size: 10px;">Кабинет</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item rounded-3 py-2 px-3 fw-semibold text-dark d-flex align-items-center gap-2 mb-1" href="{% url 'edit_profile' %}">
+                                    <i class="fas fa-user-edit text-secondary"></i> Настройка профиля
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item rounded-3 py-2 px-3 fw-semibold text-dark d-flex align-items-center gap-2 mb-1" href="{% url 'doctor_detail' user.doctor_profile.id %}" target="_blank">
+                                    <i class="fas fa-eye text-info"></i> Посмотреть мой профиль <i class="fas fa-external-link-alt ms-auto small text-muted" style="font-size: 10px;"></i>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider border-light my-2"></li>
+                        {% endif %}
+
+                        <!-- ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ПО ЦЕНТРУ -->
+                        <li class="px-3 py-2 d-flex justify-content-center mb-2" onclick="event.stopPropagation();">
+                            <div class="theme-switcher">
+                                <button type="button" class="theme-btn active" id="lightThemeBtn" onclick="setTheme('light', event)" title="Светлая тема">
+                                    <i class="fas fa-sun"></i>
+                                </button>
+                                <button type="button" class="theme-btn" id="darkThemeBtn" onclick="setTheme('dark', event)" title="Темная тема">
+                                    <i class="fas fa-moon"></i>
+                                </button>
+                            </div>
+                        </li>
+
+                        <li><hr class="dropdown-divider border-light my-2"></li>
+
+                        <!-- Выход -->
+                        <li>
+                            <a class="dropdown-item rounded-3 py-2 px-3 fw-semibold text-danger d-flex align-items-center gap-2" href="{% url 'logout' %}">
+                                <i class="fas fa-sign-out-alt"></i> Выйти из системы
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            {% else %}
+                <div class="d-flex gap-2">
+                    <a href="{% url 'login' %}" class="btn btn-link text-decoration-none text-dark fw-semibold px-3">Войти</a>
+                    <a href="{% url 'register_role_select' %}" class="btn-bento-primary text-decoration-none">Регистрация</a>
+                </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ СТРАНИЦ -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- ПОДВАЛ -->
+    <footer class="mt-5 text-center text-muted py-4">
+        <p class="m-0 small">© 2026 AuraMed. Все права защищены.</p>
+    </footer>
+
+</div>
+
+{% if user.is_authenticated %}
+    <!-- Сайдбар (Offcanvas) -->
+    <div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="doctorProfileSidebar" aria-labelledby="doctorProfileSidebarLabel"
+         style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-top-left-radius: 32px; border-bottom-left-radius: 32px; z-index: 1085;">
+        
+        <div class="offcanvas-header border-bottom border-light px-4 py-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; background: rgba(79, 70, 229, 0.1);">
+                    <i class="fas fa-user-md fs-4 text-primary"></i>
+                </div>
+                <div>
+                    <h5 class="offcanvas-title fw-bold m-0" id="doctorProfileSidebarLabel" style="letter-spacing: -0.5px;">{{ user.username }}</h5>
+                    <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill small mt-1" style="font-size: 11px;">
+                        <i class="fas fa-circle text-success me-1" style="font-size: 6px;"></i> Активный сеанс
+                    </span>
+                </div>
+            </div>
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body px-4 py-4 d-flex flex-column justify-content-between">
+            <div class="d-flex flex-column gap-2">
+                <span class="text-uppercase text-muted fw-bold small px-2 mb-1" style="font-size: 10px; letter-spacing: 1px;">Управление</span>
+                
+                {% if user.doctor_profile %}
+                    <a href="{% url 'doctor_dashboard' user.doctor_profile.id %}" class="btn btn-light bg-white border-0 text-start rounded-4 px-3 py-3 fw-semibold text-dark shadow-sm d-flex align-items-center gap-3 text-decoration-none">
+                        <div class="rounded-3 bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div>
+                            <div class="lh-sm">Расписание и приемы</div>
+                            <small class="text-muted fw-normal" style="font-size: 11px;">Журнал записи пациентов</small>
+                        </div>
+                    </a>
+                    <a href="{% url 'edit_profile' %}" class="btn btn-light bg-white border-0 text-start rounded-4 px-3 py-3 fw-semibold text-dark shadow-sm d-flex align-items-center gap-3 text-decoration-none">
+                        <div class="rounded-3 bg-secondary-subtle text-secondary p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <div>
+                            <div class="lh-sm">Профиль врача</div>
+                            <small class="text-muted fw-normal" style="font-size: 11px;">Редактирование данных</small>
+                        </div>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="pt-3 border-top border-light">
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger w-100 rounded-pill py-3 fw-semibold d-flex align-items-center justify-content-center gap-2 text-decoration-none shadow-sm">
+                    <i class="fas fa-sign-out-alt"></i> Выйти из системы
+                </a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+    // Управление кастомным выпадающим меню с плавной анимацией
+    function toggleCustomDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('customDropdown');
+        dropdown.classList.toggle('open');
+    }
+
+    // Клик вне меню закрывает его
+    document.addEventListener('click', (event) => {
+        const dropdown = document.getElementById('customDropdown');
+        if (dropdown && !dropdown.contains(event.target)) {
+            dropdown.classList.remove('open');
+        }
+    });
+
+    // Функция переключения темы
+    function setTheme(theme, event) {
+        if (event) event.stopPropagation();
+        
+        const body = document.body;
+        const lightBtn = document.getElementById('lightThemeBtn');
+        const darkBtn = document.getElementById('darkThemeBtn');
+        
+        if (theme === 'dark') {
+            body.classList.add('dark-theme');
+            if(lightBtn) lightBtn.classList.remove('active');
+            if(darkBtn) darkBtn.classList.add('active');
+            localStorage.setItem('auramed_theme', 'dark');
+        } else {
+            body.classList.remove('dark-theme');
+            if(darkBtn) darkBtn.classList.remove('active');
+            if(lightBtn) lightBtn.classList.add('active');
+            localStorage.setItem('auramed_theme', 'light');
+        }
+    }
+
+    // Автоприменение темы при загрузке
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('auramed_theme') || 'light';
+        setTheme(savedTheme);
+    });
+</script>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
