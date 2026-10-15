@@ -16,29 +16,32 @@
     <!-- Список врачей из базы данных -->
     {% for doctor in doctors %}
     <div class="col-md-4">
-        <div class="bento-card h-100 d-flex flex-column justify-content-between text-center">
+        <div class="bento-card h-100 d-flex flex-column justify-content-between text-center p-4 bg-white rounded-4 shadow-sm border border-light">
             <div>
-                <!-- Аватар врача -->
+                <!-- Аватар врача (исправлено на doctor.image) -->
                 <div class="rounded-circle bg-light mx-auto mb-3 overflow-hidden shadow-sm d-flex align-items-center justify-content-center" style="width: 90px; height: 90px;">
-                    {% if doctor.photo %}
-                        <img src="{{ doctor.photo.url }}" alt="{{ doctor.user.get_full_name }}" class="w-100 h-100 object-fit-cover">
+                    {% if doctor.image %}
+                        <img src="{{ doctor.image.url }}" alt="{{ doctor.name }}" class="w-100 h-100 object-fit-cover">
                     {% else %}
                         <i class="fas fa-user-md text-secondary fs-2"></i>
                     {% endif %}
                 </div>
 
-                <h4 class="fw-bold mb-1">{{ doctor.user.get_full_name|default:doctor.user.username }}</h4>
-                <span class="badge px-3 py-1 rounded-pill mb-3" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+                <!-- Имя врача (исправлено на doctor.name) -->
+                <h4 class="fw-bold mb-1 text-dark">{{ doctor.name|default:doctor.user.username }}</h4>
+                
+                <span class="badge px-3 py-1 rounded-pill mb-3" style="background: rgba(15, 23, 42, 0.05); color: #0f172a;">
                     {{ doctor.specialization|default:"Врач-терапевт" }}
                 </span>
                 
+                <!-- Описание (исправлено на doctor.description) -->
                 <p class="text-muted small px-2 mb-4">
-                    {{ doctor.bio|default:"Опытный специалист с многолетним стажем работы в ведущих клиниках."|truncatechars:80 }}
+                    {{ doctor.description|default:"Опытный специалист с многолетним стажем работы в ведущих клиниках."|truncatechars:80 }}
                 </p>
             </div>
 
             <div>
-                <a href="{% url 'doctor_detail' doctor.id %}" class="btn-bento-primary w-100 text-decoration-none d-block py-2">
+                <a href="{% url 'doctor_detail' doctor.id %}" class="btn w-100 py-2 fw-bold text-white rounded-pill shadow-sm text-decoration-none" style="background-color: #0f172a; transition: all 0.2s;">
                     Подробнее / Записаться
                 </a>
             </div>
