@@ -15,41 +15,54 @@
 
     <!-- Список врачей из базы данных -->
     {% for doctor in doctors %}
-    <div class="col-md-4">
-        <div class="bento-card h-100 d-flex flex-column justify-content-between text-center p-4 bg-white rounded-4 shadow-sm border border-light">
+    <div class="col-md-4 col-lg-3">
+        <div class="bento-card h-100 d-flex flex-column justify-content-between p-3 bg-white rounded-4 shadow-sm border border-light text-start">
             <div>
-                <!-- Аватар врача (исправлено на doctor.image) -->
-                <div class="rounded-circle bg-light mx-auto mb-3 overflow-hidden shadow-sm d-flex align-items-center justify-content-center" style="width: 90px; height: 90px;">
+                <!-- Скругленный прямоугольник/квадрат для фото в полный рост (Bento) -->
+                <div class="rounded-4 bg-light mb-3 overflow-hidden shadow-sm d-flex align-items-center justify-content-center" style="height: 260px; width: 100%;">
                     {% if doctor.image %}
-                        <img src="{{ doctor.image.url }}" alt="{{ doctor.name }}" class="w-100 h-100 object-fit-cover">
+                        <img src="{{ doctor.image.url }}" alt="{{ doctor.name|default:doctor.user.username }}" class="w-100 h-100" style="object-fit: cover; object-position: top;">
                     {% else %}
-                        <i class="fas fa-user-md text-secondary fs-2"></i>
+                        <div class="text-center text-muted">
+                            <i class="fas fa-user-md fs-1 mb-2"></i>
+                            <div class="small">Нет фото</div>
+                        </div>
                     {% endif %}
                 </div>
 
-                <!-- Имя врача (исправлено на doctor.name) -->
-                <h4 class="fw-bold mb-1 text-dark">{{ doctor.name|default:doctor.user.username }}</h4>
+                <!-- ФИО врача -->
+                <h5 class="fw-bold mb-1 text-dark" style="letter-spacing: -0.3px;">
+                    {{ doctor.name|default:doctor.user.username }}
+                </h5>
                 
-                <span class="badge px-3 py-1 rounded-pill mb-3" style="background: rgba(15, 23, 42, 0.05); color: #0f172a;">
+                <!-- Специализация -->
+                <p class="text-primary fw-medium small mb-1">
                     {{ doctor.specialization|default:"Врач-терапевт" }}
-                </span>
-                
-                <!-- Описание (исправлено на doctor.description) -->
-                <p class="text-muted small px-2 mb-4">
-                    {{ doctor.description|default:"Опытный специалист с многолетним стажем работы в ведущих клиниках."|truncatechars:80 }}
+                </p>
+
+                <!-- Опыт работы -->
+                {% if doctor.experience %}
+                    <p class="text-muted small mb-2">
+                        <i class="fas fa-award me-1 text-warning"></i> Опыт работы: {{ doctor.experience }} лет
+                    </p>
+                {% endif %}
+
+                <!-- Описание -->
+                <p class="text-muted small mb-3">
+                    {{ doctor.description|default:"Опытный специалист с многолетним стажем работы."|truncatechars:80 }}
                 </p>
             </div>
 
             <div>
-                <a href="{% url 'doctor_detail' doctor.id %}" class="btn w-100 py-2 fw-bold text-white rounded-pill shadow-sm text-decoration-none" style="background-color: #0f172a; transition: all 0.2s;">
+                <a href="{% url 'doctor_detail' doctor.id %}" class="btn w-100 py-2.5 fw-semibold text-white rounded-pill shadow-sm text-decoration-none" style="background-color: #0f172a; transition: all 0.2s;">
                     Подробнее / Записаться
                 </a>
             </div>
         </div>
     </div>
     {% empty %}
-    <div class="col-12">
-        <div class="bento-card text-center py-5">
+    <div class="col-12 text-center py-5">
+        <div class="bento-card py-5">
             <h4 class="text-muted mb-0">Пока нет зарегистрированных врачей</h4>
         </div>
     </div>
