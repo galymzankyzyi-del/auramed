@@ -1,0 +1,367 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}
+Управление услугами — AuraMed
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .services-admin-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        color: var(--text-main);
+    }
+
+    .sa-card {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--card-border, #e2e8f0);
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: var(--shadow-soft, 0 8px 28px rgba(0,0,0,.04));
+    }
+
+    .sa-title {
+        font-size: clamp(24px, 4vw, 34px);
+        font-weight: 800;
+        letter-spacing: -.7px;
+    }
+
+    .sa-subtitle {
+        color: #64748b;
+    }
+
+    .sa-input {
+        width: 100%;
+        min-width: 0;
+        padding: 12px 15px;
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        border-radius: 13px;
+        color: #1e293b;
+    }
+
+    .sa-service {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 18px 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .sa-service:last-child {
+        border-bottom: none;
+    }
+
+    .sa-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 16px;
+        flex-shrink: 0;
+    }
+
+    .sa-placeholder {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        background: #eef2ff;
+        color: #6366f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 27px;
+        flex-shrink: 0;
+    }
+
+    .sa-name {
+        font-size: 16px;
+        font-weight: 750;
+        overflow-wrap: anywhere;
+    }
+
+    .sa-meta {
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .sa-status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .sa-status.active {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .sa-status.inactive {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    .sa-edit {
+        display: inline-block;
+        border: 1px solid #c7d2fe;
+        border-radius: 12px;
+        padding: 9px 13px;
+        color: #4f46e5;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .sa-toggle {
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        padding: 9px 13px;
+        background: transparent;
+        color: var(--text-main);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .sa-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    body.dark-theme .sa-card {
+        background: #19233b;
+        border-color: #39435f;
+    }
+
+    body.dark-theme .sa-service {
+        border-color: #39435f;
+    }
+
+    body.dark-theme .sa-input {
+        background: #202b44;
+        color: #f8fafc;
+        border-color: #475569;
+    }
+
+    body.dark-theme .sa-subtitle,
+    body.dark-theme .sa-meta {
+        color: #cbd5e1;
+    }
+
+    body.dark-theme .sa-edit {
+        color: #c7d2fe;
+        border-color: #6366f1;
+    }
+
+    body.dark-theme .sa-toggle {
+        color: #f8fafc;
+        border-color: #64748b;
+    }
+
+    body.dark-theme .sa-status.active {
+        background: #30365e;
+        color: #c7d2fe;
+    }
+
+    body.dark-theme .sa-status.inactive {
+        background: #334155;
+        color: #cbd5e1;
+    }
+
+    @media (max-width: 650px) {
+        .sa-card {
+            padding: 17px;
+        }
+
+        .sa-service {
+            flex-wrap: wrap;
+        }
+
+        .sa-image,
+        .sa-placeholder {
+            width: 58px;
+            height: 58px;
+        }
+
+        .sa-actions {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="services-admin-page py-4">
+
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center gap-3 mb-4">
+
+        <div>
+            <a href="{% url 'admin_dashboard' %}"
+               class="text-decoration-none sa-subtitle small">
+                <i class="fas fa-arrow-left me-2"></i>
+                Панель администратора
+            </a>
+
+            <h1 class="sa-title mt-3 mb-1">
+                Управление услугами
+            </h1>
+
+            <p class="sa-subtitle mb-0">
+                Медицинские услуги AuraMed
+            </p>
+        </div>
+
+        <a href="{% url 'admin_service_create' %}"
+           class="btn-bento-primary text-decoration-none">
+            <i class="fas fa-plus me-2"></i>
+            Добавить услугу
+        </a>
+
+    </div>
+
+    <div class="sa-card mb-4">
+
+        <form method="get" class="row g-3">
+
+            <div class="col-12 col-md-6">
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ search }}"
+                    class="sa-input"
+                    placeholder="Поиск по названию"
+                    aria-label="Поиск услуги">
+            </div>
+
+            <div class="col-12 col-md-4">
+                <select name="category" class="sa-input"
+                        aria-label="Категория">
+                    <option value="">Все категории</option>
+
+                    {% for value, label in categories %}
+                    <option value="{{ value }}"
+                        {% if selected_category == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-12 col-md-2">
+                <button class="btn-bento-primary w-100"
+                        type="submit">
+                    Найти
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="sa-card">
+
+        <h2 class="h5 fw-bold mb-3">
+            Список услуг
+        </h2>
+
+        {% for service in services %}
+
+        <div class="sa-service">
+
+            {% if service.image %}
+            <img src="{{ service.image.url }}"
+                 alt="{{ service.name }}"
+                 class="sa-image">
+            {% else %}
+            <div class="sa-placeholder">
+                <i class="fas fa-stethoscope"></i>
+            </div>
+            {% endif %}
+
+            <div class="flex-grow-1" style="min-width:0;">
+
+                <div class="sa-name mb-1">
+                    {{ service.name }}
+                </div>
+
+                <div class="sa-meta mb-2">
+                    {{ service.get_category_display }}
+                    · {{ service.duration }} мин.
+                    ·
+                    {% if service.price is not None %}
+                        {{ service.price|floatformat:0 }} ₸
+                    {% else %}
+                        Цена уточняется
+                    {% endif %}
+                </div>
+
+                {% if service.is_active %}
+                <span class="sa-status active">
+                    Активна
+                </span>
+                {% else %}
+                <span class="sa-status inactive">
+                    Скрыта
+                </span>
+                {% endif %}
+
+                {% if service.is_featured %}
+                <span class="sa-status active">
+                    Популярная
+                </span>
+                {% endif %}
+
+            </div>
+
+            <div class="sa-actions">
+
+                <a href="{% url 'admin_service_edit' service.id %}"
+                   class="sa-edit">
+                    <i class="fas fa-pen me-1"></i>
+                    Изменить
+                </a>
+
+                <form method="post"
+                      action="{% url 'admin_service_toggle' service.id %}">
+                    {% csrf_token %}
+
+                    <button type="submit" class="sa-toggle">
+                        {% if service.is_active %}
+                            Скрыть
+                        {% else %}
+                            Включить
+                        {% endif %}
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="text-center py-5">
+            <i class="fas fa-clipboard-list fa-2x
+                      sa-subtitle mb-3"></i>
+
+            <h3 class="h5 fw-bold">
+                Услуги не найдены
+            </h3>
+
+            <p class="sa-subtitle">
+                Добавьте первую услугу или измените фильтры.
+            </p>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,108 +1,457 @@
+
 {% extends 'main/base.html' %}
 
-{% block title %}Услуги и программы — AuraMed{% endblock %}
+{% block title %}Медицинские услуги — AuraMed{% endblock %}
+
+{% block extra_css %}
+<style>
+    .services-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        color: var(--text-main);
+    }
+
+    .services-hero {
+        background: linear-gradient(120deg, #eef2ff, #f8f7ff);
+        border: 1px solid #e0e7ff;
+        border-radius: 30px;
+        padding: clamp(24px, 5vw, 52px);
+        margin-bottom: 28px;
+    }
+
+    .services-hero h1 {
+        font-size: clamp(28px, 5vw, 48px);
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        line-height: 1.15;
+        color: #1e293b;
+    }
+
+    .services-hero p {
+        color: #64748b;
+        max-width: 650px;
+        line-height: 1.7;
+    }
+
+    .services-filter {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--card-border, #e2e8f0);
+        padding: 20px;
+        border-radius: 22px;
+        margin-bottom: 25px;
+    }
+
+    .services-filter .form-control,
+    .services-filter .form-select {
+        min-height: 48px;
+        border-radius: 13px;
+        border: 1px solid #cbd5e1;
+        color: #1e293b;
+        background: #fff;
+    }
+
+    .services-filter .form-control:focus,
+    .services-filter .form-select:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.12);
+    }
+
+    .service-card {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--card-border, #e2e8f0);
+        border-radius: 24px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        transition: transform .2s, box-shadow .2s;
+    }
+
+    .service-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(79,70,229,.09);
+    }
+
+    .service-image {
+        width: 100%;
+        height: 190px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .service-placeholder {
+        height: 190px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg,#eef2ff,#ddd6fe);
+        color: #6366f1;
+        font-size: 48px;
+    }
+
+    .service-body {
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .service-category {
+        font-size: 11px;
+        font-weight: 700;
+        color: #6366f1;
+        background: #eef2ff;
+        padding: 7px 11px;
+        border-radius: 999px;
+        display: inline-block;
+    }
+
+    .service-featured {
+        background: #fff7ed;
+        color: #9a3412;
+    }
+
+    .service-name {
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1.3;
+        margin: 16px 0 10px;
+        overflow-wrap: anywhere;
+    }
+
+    .service-description {
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.65;
+        flex: 1;
+        overflow-wrap: anywhere;
+    }
+
+    .service-meta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        border-top: 1px solid #e2e8f0;
+        margin-top: 18px;
+        padding-top: 17px;
+        margin-bottom: 16px;
+    }
+
+    .service-price {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text-main);
+    }
+
+    .service-duration {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .service-link {
+        background: #6366f1;
+        color: #fff;
+        border-radius: 14px;
+        padding: 13px 16px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 700;
+        transition: background .2s;
+    }
+
+    .service-link:hover {
+        background: #4f46e5;
+        color: #fff;
+    }
+
+    .services-empty {
+        text-align: center;
+        padding: 55px 20px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 22px;
+    }
+
+    /* Тёмная тема */
+
+    body.dark-theme .services-hero {
+        background: linear-gradient(120deg,#202b44,#30365e);
+        border-color: #465071;
+    }
+
+    body.dark-theme .services-hero h1,
+    body.dark-theme .service-price {
+        color: #f8fafc;
+    }
+
+    body.dark-theme .services-hero p,
+    body.dark-theme .service-description,
+    body.dark-theme .service-duration {
+        color: #cbd5e1;
+    }
+
+    body.dark-theme .services-filter,
+    body.dark-theme .service-card {
+        background: #19233b;
+        border-color: #39435f;
+    }
+
+    body.dark-theme .services-filter .form-control,
+    body.dark-theme .services-filter .form-select {
+        background: #202b44;
+        border-color: #475569;
+        color: #f8fafc;
+    }
+
+    body.dark-theme .services-filter .form-control::placeholder {
+        color: #94a3b8;
+    }
+
+    body.dark-theme .service-category {
+        background: #30365e;
+        color: #c7d2fe;
+    }
+
+    body.dark-theme .service-featured {
+        background: #463626;
+        color: #fed7aa;
+    }
+
+    body.dark-theme .service-meta {
+        border-color: #39435f;
+    }
+
+    body.dark-theme .service-placeholder {
+        background: linear-gradient(135deg,#283351,#3b376b);
+        color: #a5b4fc;
+    }
+
+    @media (max-width: 576px) {
+        .services-hero {
+            border-radius: 22px;
+        }
+
+        .services-filter {
+            padding: 16px;
+        }
+
+        .service-image,
+        .service-placeholder {
+            height: 175px;
+        }
+
+        .service-body {
+            padding: 18px;
+        }
+
+        .service-name {
+            font-size: 19px;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row g-4">
-    
-    <!-- Шапка раздела -->
-    <div class="col-12">
-        <div class="bento-card py-5 px-4 text-center position-relative overflow-hidden" 
-             style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(238,242,255,0.85) 100%);">
-            <span class="badge px-3 py-2 rounded-pill mb-3 fw-medium" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">
-                💎 Премиальная медицина
-            </span>
-            <h1 class="fw-bold display-5 mb-3" style="letter-spacing: -1.5px;">Эко-программы и услуги</h1>
-            <p class="text-muted w-75 mx-auto mb-0 fs-5">
-                Комплексный подход к вашему здоровью: от детальной диагностики до персонального сопровождения ведущими специалистами.
-            </p>
-        </div>
+<div class="services-page py-4">
+
+    <!-- Заголовок -->
+
+    <section class="services-hero">
+        <span class="service-category mb-3">
+            AuraMed · Медицинский центр
+        </span>
+
+        <h1 class="mb-3">
+            Наши медицинские услуги
+        </h1>
+
+        <p class="mb-0">
+            Выберите консультацию, диагностическую услугу
+            или комплексную программу. Посмотрите описание,
+            стоимость и доступных специалистов.
+        </p>
+    </section>
+
+    <!-- Поиск и фильтр -->
+
+    <div class="services-filter">
+
+        <form method="get" class="row g-3">
+
+            <div class="col-12 col-md-6">
+                <label for="serviceSearch"
+                       class="form-label fw-semibold small">
+                    Поиск услуги
+                </label>
+
+                <input
+                    id="serviceSearch"
+                    type="search"
+                    name="q"
+                    value="{{ search }}"
+                    class="form-control"
+                    placeholder="Например, кардиолог">
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label for="serviceCategory"
+                       class="form-label fw-semibold small">
+                    Категория
+                </label>
+
+                <select id="serviceCategory"
+                        name="category"
+                        class="form-select">
+
+                    <option value="">
+                        Все категории
+                    </option>
+
+                    {% for value, label in categories %}
+                    <option value="{{ value }}"
+                        {% if selected_category == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="col-12 col-md-2 d-flex align-items-end">
+                <button type="submit"
+                        class="service-link border-0 w-100"
+                        style="min-height:48px;">
+                    Найти
+                </button>
+            </div>
+
+        </form>
+
+        {% if search or selected_category %}
+        <a href="{% url 'services' %}"
+           class="d-inline-block mt-3 small text-decoration-none">
+            <i class="fas fa-times me-1"></i>
+            Сбросить фильтры
+        </a>
+        {% endif %}
+
     </div>
 
-    <!-- Сетка пакетов услуг -->
-    <div class="col-md-4">
-        <div class="bento-card h-100 d-flex flex-column justify-content-between">
-            <div>
-                <div class="rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-4" style="width: 65px; height: 65px;">
-                    <span class="fs-2">❤️</span>
-                </div>
-                <h3 class="fw-bold mb-2">Абсолютное сердце</h3>
-                <p class="text-muted small mb-4">
-                    Глубокий кардио-скрининг, ЭКГ-мониторинг, расширенная лабораторная диагностика и консультация главного кардиолога.
-                </p>
-                <ul class="list-unstyled text-muted small mb-4">
-                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Экспресс-анализ ритма</li>
-                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Персональный план нагрузок</li>
-                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Повторный приём включен</li>
-                </ul>
-            </div>
-            <div>
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small">Стоимость пакета</span>
-                    <span class="fw-bold fs-5 text-primary">от 45 000 ₸</span>
-                </div>
-                <a href="{% url 'doctor_list' %}" class="btn-bento-primary w-100 text-decoration-none d-block py-2 text-center">
-                    Выбрать программу
-                </a>
-            </div>
-        </div>
+    <!-- Каталог -->
+
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center gap-2 mb-3">
+        <h2 class="h4 fw-bold mb-0">
+            Доступные услуги
+        </h2>
     </div>
 
-    <div class="col-md-4">
-        <div class="bento-card h-100 d-flex flex-column justify-content-between" style="border: 2px solid rgba(79, 70, 229, 0.3);">
-            <div>
-                <span class="badge bg-primary text-white px-3 py-1 rounded-pill mb-3">Хит программы</span>
-                <div class="rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-4" style="width: 65px; height: 65px;">
-                    <span class="fs-2">⚡</span>
-                </div>
-                <h3 class="fw-bold mb-2">Энергия и сон</h3>
-                <p class="text-muted small mb-4">
-                    Программа восстановления жизненных сил, коррекция хронической усталости и улучшение качества ночного отдыха.
-                </p>
-                <ul class="list-unstyled text-muted small mb-4">
-                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Чек-ап микроэлементов</li>
-                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Консультация сомнолога</li>
-                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Трекинг восстановления</li>
-                </ul>
-            </div>
-            <div>
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small">Стоимость пакета</span>
-                    <span class="fw-bold fs-5 text-primary">от 38 000 ₸</span>
-                </div>
-                <a href="{% url 'doctor_list' %}" class="btn-bento-primary w-100 text-decoration-none d-block py-2 text-center">
-                    Выбрать программу
-                </a>
-            </div>
-        </div>
-    </div>
+    <div class="row g-4">
 
-    <div class="col-md-4">
-        <div class="bento-card h-100 d-flex flex-column justify-content-between">
-            <div>
-                <div class="rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-4" style="width: 65px; height: 65px;">
-                    <span class="fs-2">🛡️</span>
+        {% for service in services %}
+
+        <div class="col-12 col-md-6 col-xl-4">
+
+            <article class="service-card">
+
+                {% if service.image %}
+                <img
+                    src="{{ service.image.url }}"
+                    alt="{{ service.name }}"
+                    class="service-image">
+                {% else %}
+                <div class="service-placeholder">
+                    <i class="fas fa-heartbeat"></i>
                 </div>
-                <h3 class="fw-bold mb-2">Терапия 24/7</h3>
-                <p class="text-muted small mb-4">
-                    Постоянное медицинское сопровождение, оперативная связь с дежурным врачом и полный контроль вашего здоровья.
-                </p>
-                <ul class="list-unstyled text-muted small mb-4">
-                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Безлимитный чат с врачом</li>
-                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Срочные видеоконсультации</li>
-                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Электронная медкнижка</li>
-                </ul>
-            </div>
-            <div>
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small">Стоимость пакета</span>
-                    <span class="fw-bold fs-5 text-primary">от 25 000 ₸/мес</span>
+                {% endif %}
+
+                <div class="service-body">
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        <span class="service-category">
+                            {{ service.get_category_display }}
+                        </span>
+
+                        {% if service.is_featured %}
+                        <span class="service-category service-featured">
+                            Популярная
+                        </span>
+                        {% endif %}
+
+                    </div>
+
+                    <h3 class="service-name">
+                        {{ service.name }}
+                    </h3>
+
+                    <p class="service-description">
+                        {% if service.short_description %}
+                            {{ service.short_description }}
+                        {% else %}
+                            {{ service.description|truncatechars:150 }}
+                        {% endif %}
+                    </p>
+
+                    <div class="service-meta">
+
+                        <div class="service-price">
+                            {% if service.price is not None %}
+                                {{ service.price|floatformat:0 }} ₸
+                            {% else %}
+                                По запросу
+                            {% endif %}
+                        </div>
+
+                        <div class="service-duration">
+                            <i class="far fa-clock me-1"></i>
+                            {{ service.duration }} мин.
+                        </div>
+
+                    </div>
+
+                    <a href="{% url 'service_detail' service.id %}"
+                       class="service-link">
+                        Подробнее
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+
                 </div>
-                <a href="{% url 'doctor_list' %}" class="btn-bento-primary w-100 text-decoration-none d-block py-2 text-center">
-                    Подключить
-                </a>
-            </div>
+
+            </article>
+
         </div>
+
+        {% empty %}
+
+        <div class="col-12">
+
+            <div class="services-empty">
+
+                <i class="fas fa-search fa-2x text-primary mb-3"></i>
+
+                <h3 class="h5 fw-bold">
+                    Услуги не найдены
+                </h3>
+
+                <p class="service-description mb-3">
+                    Попробуйте изменить запрос или выбрать
+                    другую категорию.
+                </p>
+
+                <a href="{% url 'services' %}"
+                   class="service-link d-inline-block">
+                    Показать все услуги
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
     </div>
 
 </div>

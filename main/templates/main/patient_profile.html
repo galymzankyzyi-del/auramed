@@ -1,0 +1,403 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}
+Мой профиль — AuraMed
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-page {
+        max-width: 1050px;
+        margin: 0 auto;
+        color: var(--text-main);
+    }
+
+    .profile-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .profile-avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 28px;
+        object-fit: cover;
+        background: #eef2ff;
+        border: 3px solid rgba(99,102,241,.12);
+    }
+
+    .profile-avatar-empty {
+        width: 110px;
+        height: 110px;
+        border-radius: 28px;
+        background: #eef2ff;
+        color: #6366f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+    }
+
+    .profile-title {
+        font-size: clamp(25px, 4vw, 34px);
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .profile-subtitle {
+        color: var(--text-muted);
+        font-size: 13px;
+    }
+
+    .profile-info {
+        background: rgba(99,102,241,.06);
+        border: 1px solid rgba(99,102,241,.09);
+        border-radius: 18px;
+        padding: 17px;
+        height: 100%;
+    }
+
+    .profile-info-label {
+        color: var(--text-muted);
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+
+    .profile-info-value {
+        color: var(--text-main);
+        font-size: 15px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .profile-section-title {
+        font-weight: 800;
+        font-size: 21px;
+        margin-bottom: 22px;
+    }
+
+    .profile-field {
+        margin-bottom: 19px;
+    }
+
+    .profile-field label {
+        display: block;
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .profile-field .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 13px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #1e293b;
+    }
+
+    .profile-field .form-control:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.12);
+    }
+
+    .profile-field .errorlist {
+        color: #dc2626;
+        font-size: 12px;
+        padding-left: 18px;
+        margin-top: 7px;
+    }
+
+    .profile-note {
+        color: var(--text-muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .profile-demo-tag {
+        display: inline-block;
+        background: rgba(99,102,241,.12);
+        color: #4f46e5;
+        border-radius: 99px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* Тёмная тема */
+
+    body.dark-theme .profile-card {
+        background: #19233b;
+        border-color: rgba(165,180,252,.16);
+    }
+
+    body.dark-theme .profile-info {
+        background: #202b44;
+        border-color: rgba(165,180,252,.14);
+    }
+
+    body.dark-theme .profile-info-value,
+    body.dark-theme .profile-title,
+    body.dark-theme .profile-section-title,
+    body.dark-theme .profile-field label {
+        color: #f8fafc;
+    }
+
+    body.dark-theme .profile-info-label,
+    body.dark-theme .profile-subtitle,
+    body.dark-theme .profile-note {
+        color: #cbd5e1;
+    }
+
+    body.dark-theme .profile-avatar-empty {
+        background: #30365e;
+        color: #c7d2fe;
+    }
+
+    body.dark-theme .profile-field .form-control {
+        background: #202b44;
+        border-color: #475569;
+        color: #f8fafc;
+    }
+
+    body.dark-theme .profile-demo-tag {
+        background: rgba(129,140,248,.18);
+        color: #c7d2fe;
+    }
+
+    @media (max-width: 768px) {
+        .profile-card {
+            padding: 19px;
+        }
+
+        .profile-avatar,
+        .profile-avatar-empty {
+            width: 86px;
+            height: 86px;
+            border-radius: 22px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="profile-page">
+
+    <!-- Навигация -->
+
+    <div class="mb-4">
+        <a href="{% url 'patient_dashboard' %}"
+           class="text-decoration-none text-muted small">
+            <i class="fas fa-arrow-left me-2"></i>
+            Назад в мой кабинет
+        </a>
+    </div>
+
+    <!-- Основной профиль -->
+
+    <div class="profile-card mb-4">
+
+        <div class="d-flex flex-wrap align-items-center gap-4 mb-4">
+
+            {% if profile.image %}
+
+                <img src="{{ profile.image.url }}"
+                     alt="Фото пациента"
+                     class="profile-avatar">
+
+            {% else %}
+
+                <div class="profile-avatar-empty">
+                    <i class="fas fa-user"></i>
+                </div>
+
+            {% endif %}
+
+            <div class="flex-grow-1">
+
+                <span class="profile-demo-tag mb-2">
+                    Пациент AuraMed
+                </span>
+
+                <h1 class="profile-title mb-2">
+                    {% if user.get_full_name %}
+                        {{ user.get_full_name }}
+                    {% else %}
+                        {{ user.username }}
+                    {% endif %}
+                </h1>
+
+                <p class="profile-subtitle mb-0">
+                    Личный профиль пациента
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="row g-3">
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="profile-info">
+                    <div class="profile-info-label">
+                        Возраст
+                    </div>
+                    <div class="profile-info-value">
+                        {% if profile.age is not None %}
+                            {{ profile.age }} лет
+                        {% else %}
+                            Не указан
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="profile-info">
+                    <div class="profile-info-label">
+                        Дата рождения
+                    </div>
+                    <div class="profile-info-value">
+                        {% if profile.birth_date %}
+                            {{ profile.birth_date|date:"d.m.Y" }}
+                        {% else %}
+                            Не указана
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="profile-info">
+                    <div class="profile-info-label">
+                        Пациент клиники с
+                    </div>
+                    <div class="profile-info-value">
+                        {{ profile.clinic_since|date:"d.m.Y" }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="profile-info">
+                    <div class="profile-info-label">
+                        Демо-ID пациента
+                    </div>
+                    <div class="profile-info-value">
+                        {{ profile.demo_id }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <p class="profile-note mt-3 mb-0">
+            Демо-ID используется только для учебной версии
+            AuraMed. Он не является ИИН или документом,
+            удостоверяющим личность.
+        </p>
+
+    </div>
+
+    <!-- Форма редактирования -->
+
+    <div class="profile-card mb-4">
+
+        <h2 class="profile-section-title">
+            <i class="fas fa-user-edit text-primary me-2"></i>
+            Редактирование профиля
+        </h2>
+
+        <form method="post" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            {{ user_form.non_field_errors }}
+            {{ profile_form.non_field_errors }}
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="profile-field">
+                        <label for="{{ user_form.first_name.id_for_label }}">
+                            Имя
+                        </label>
+                        {{ user_form.first_name }}
+                        {{ user_form.first_name.errors }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="profile-field">
+                        <label for="{{ user_form.last_name.id_for_label }}">
+                            Фамилия
+                        </label>
+                        {{ user_form.last_name }}
+                        {{ user_form.last_name.errors }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="profile-field">
+                        <label for="{{ user_form.email.id_for_label }}">
+                            Электронная почта
+                        </label>
+                        {{ user_form.email }}
+                        {{ user_form.email.errors }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="profile-field">
+                        <label for="{{ profile_form.phone.id_for_label }}">
+                            Телефон
+                        </label>
+                        {{ profile_form.phone }}
+                        {{ profile_form.phone.errors }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="profile-field">
+                        <label for="{{ profile_form.birth_date.id_for_label }}">
+                            Дата рождения
+                        </label>
+                        {{ profile_form.birth_date }}
+                        {{ profile_form.birth_date.errors }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="profile-field">
+                        <label for="{{ profile_form.image.id_for_label }}">
+                            Фотография
+                        </label>
+                        {{ profile_form.image }}
+                        {{ profile_form.image.errors }}
+
+                        <div class="profile-note mt-2">
+                            JPEG, PNG или WebP. До 3 МБ.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="submit"
+                    class="btn-bento-primary">
+                <i class="fas fa-save me-2"></i>
+                Сохранить изменения
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

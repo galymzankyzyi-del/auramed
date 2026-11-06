@@ -1,0 +1,209 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}Управление врачами — AuraMed{% endblock %}
+
+{% block extra_css %}
+<style>
+    .adm-title {
+        font-size: clamp(26px, 4vw, 36px);
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .adm-doctor-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 24px;
+        padding: 22px;
+        box-shadow: var(--shadow-soft);
+        height: 100%;
+        transition: transform .2s;
+    }
+
+    .adm-doctor-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .adm-doctor-photo {
+        width: 76px;
+        height: 76px;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #e9e9ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6366f1;
+        font-size: 28px;
+        flex-shrink: 0;
+    }
+
+    .adm-doctor-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .adm-specialization {
+        display: inline-block;
+        background: rgba(99, 102, 241, .12);
+        color: #6366f1;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 30px;
+        padding: 6px 12px;
+    }
+
+    .adm-edit-button {
+        display: block;
+        text-align: center;
+        text-decoration: none;
+        background: #0f172a;
+        color: white;
+        padding: 12px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .adm-edit-button:hover {
+        color: white;
+        background: #334155;
+    }
+
+    .adm-muted {
+        color: var(--text-muted);
+    }
+
+    body.dark-theme .adm-doctor-card {
+        color: #f8fafc;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <a href="{% url 'admin_dashboard' %}"
+       class="text-decoration-none adm-muted small">
+        <i class="fas fa-arrow-left me-2"></i>
+        Назад в панель
+    </a>
+</div>
+
+<div class="d-flex flex-wrap justify-content-between
+            align-items-center gap-3 mb-4">
+
+    <div>
+        <span class="badge rounded-pill mb-2"
+              style="background:#eae8ff;color:#4f46e5;">
+            Управление персоналом
+        </span>
+
+        <h1 class="adm-title mb-1">Врачи клиники</h1>
+
+        <p class="adm-muted mb-0">
+            Всего специалистов: {{ doctors|length }}
+        </p>
+    </div>
+
+    <a href="{% url 'admin_doctor_create' %}"
+       class="btn-bento-primary">
+        <i class="fas fa-plus me-2"></i>
+        Добавить врача
+    </a>
+</div>
+
+<div class="row g-3">
+
+    {% for doctor in doctors %}
+
+    <div class="col-md-6 col-xl-4">
+
+        <div class="adm-doctor-card">
+
+            <div class="d-flex align-items-start gap-3 mb-3">
+
+                <div class="adm-doctor-photo">
+
+                    {% if doctor.image %}
+                        <img src="{{ doctor.image.url }}"
+                             alt="{{ doctor.name }}">
+                    {% else %}
+                        <i class="fas fa-user-md"></i>
+                    {% endif %}
+
+                </div>
+
+                <div class="flex-grow-1">
+
+                    <h5 class="fw-bold mb-2">
+                        {{ doctor.name }}
+                    </h5>
+
+                    <span class="adm-specialization">
+                        {{ doctor.specialization }}
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="small adm-muted mb-2">
+                <i class="fas fa-briefcase me-2"></i>
+                Стаж: {{ doctor.experience }} лет
+            </div>
+
+            <div class="small adm-muted mb-2">
+                <i class="fas fa-clock me-2"></i>
+                {{ doctor.work_start|time:"H:i" }}
+                —
+                {{ doctor.work_end|time:"H:i" }}
+            </div>
+
+            <div class="small adm-muted mb-3">
+                <i class="fas fa-user me-2"></i>
+                Логин:
+                {% if doctor.user %}
+                    {{ doctor.user.username }}
+                {% else %}
+                    Не привязан
+                {% endif %}
+            </div>
+
+            <a href="{% url 'admin_doctor_edit' doctor.id %}"
+               class="adm-edit-button">
+                <i class="fas fa-pen me-2"></i>
+                Редактировать профиль
+            </a>
+
+        </div>
+    </div>
+
+    {% empty %}
+
+    <div class="col-12">
+        <div class="bento-card text-center py-5">
+
+            <i class="fas fa-user-md fa-3x mb-3 adm-muted"></i>
+
+            <h5 class="fw-bold">Врачей пока нет</h5>
+
+            <p class="adm-muted">
+                Создайте первый профиль врача.
+            </p>
+
+            <a href="{% url 'admin_doctor_create' %}"
+               class="btn-bento-primary">
+                Добавить врача
+            </a>
+
+        </div>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

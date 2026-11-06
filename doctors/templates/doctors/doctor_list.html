@@ -1,72 +1,365 @@
+
 {% extends 'main/base.html' %}
 
 {% block title %}Наши врачи — AuraMed{% endblock %}
 
 {% block content %}
+
 <div class="row g-4">
-    
-    <!-- Заголовок страницы в Bento-стиле -->
+
+    <!-- =====================================
+         ЗАГОЛОВОК СТРАНИЦЫ
+    ====================================== -->
+
     <div class="col-12">
-        <div class="bento-card py-4 px-5 text-center" style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(238,242,255,0.85) 100%);">
-            <h1 class="fw-bold mb-2" style="letter-spacing: -1px;">Наши специалисты</h1>
-            <p class="text-muted mb-0">Выберите квалифицированного врача и запишитесь на консультацию онлайн</p>
+
+        <div class="doctors-hero bento-card py-4 px-5 text-center"
+             style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(238,242,255,0.85) 100%);">
+
+            <h1 class="fw-bold mb-2"
+                style="letter-spacing: -1px;">
+                Наши специалисты
+            </h1>
+
+            <p class="text-muted mb-0">
+                Выберите квалифицированного врача
+                и запишитесь на консультацию онлайн
+            </p>
+
         </div>
+
     </div>
 
-    <!-- Список врачей из базы данных -->
+
+    <!-- =====================================
+         СПИСОК ВРАЧЕЙ
+    ====================================== -->
+
     {% for doctor in doctors %}
+
     <div class="col-md-4 col-lg-3">
-        <div class="bento-card h-100 d-flex flex-column justify-content-between p-3 bg-white rounded-4 shadow-sm border border-light text-start">
+
+        <div class="doctor-card bento-card h-100 d-flex flex-column justify-content-between p-3 bg-white rounded-4 shadow-sm border border-light text-start">
+
             <div>
-                <!-- Скругленный прямоугольник/квадрат для фото в полный рост (Bento) -->
-                <div class="rounded-4 bg-light mb-3 overflow-hidden shadow-sm d-flex align-items-center justify-content-center" style="height: 260px; width: 100%;">
+
+                <!-- ФОТО ВРАЧА -->
+
+                <div class="doctor-photo rounded-4 bg-light mb-3 overflow-hidden shadow-sm d-flex align-items-center justify-content-center"
+                     style="height:260px; width:100%;">
+
                     {% if doctor.image %}
-                        <img src="{{ doctor.image.url }}" alt="{{ doctor.name|default:doctor.user.username }}" class="w-100 h-100" style="object-fit: cover; object-position: top;">
+
+                        <img
+                            src="{{ doctor.image.url }}"
+                            alt="{{ doctor.name|default:doctor.user.username }}"
+                            class="w-100 h-100"
+                            style="
+                                object-fit:cover;
+                                object-position:top;
+                            "
+                        >
+
                     {% else %}
+
                         <div class="text-center text-muted">
+
                             <i class="fas fa-user-md fs-1 mb-2"></i>
-                            <div class="small">Нет фото</div>
+
+                            <div class="small">
+                                Нет фото
+                            </div>
+
                         </div>
+
                     {% endif %}
+
                 </div>
 
-                <!-- ФИО врача -->
-                <h5 class="fw-bold mb-1 text-dark" style="letter-spacing: -0.3px;">
+
+                <!-- ФИО ВРАЧА -->
+
+                <h5 class="doctor-name fw-bold mb-1 text-dark"
+                    style="letter-spacing:-0.3px;">
+
                     {{ doctor.name|default:doctor.user.username }}
+
                 </h5>
-                
-                <!-- Специализация -->
-                <p class="text-primary fw-medium small mb-1">
-                    {{ doctor.specialization|default:"Врач-терапевт" }}
+
+
+                <!-- СПЕЦИАЛИЗАЦИЯ -->
+
+                <p class="doctor-specialization text-primary fw-medium small mb-1">
+
+                    {{ doctor.specialization|default:"Специализация не указана" }}
+
                 </p>
 
-                <!-- Опыт работы -->
+
+                <!-- ОПЫТ РАБОТЫ -->
+
                 {% if doctor.experience %}
-                    <p class="text-muted small mb-2">
-                        <i class="fas fa-award me-1 text-warning"></i> Опыт работы: {{ doctor.experience }} лет
+
+                    <p class="doctor-experience text-muted small mb-2">
+
+                        <i class="fas fa-award me-1 text-warning"></i>
+
+                        Опыт работы: {{ doctor.experience }} лет
+
                     </p>
+
                 {% endif %}
 
-                <!-- Описание -->
-                <p class="text-muted small mb-3">
-                    {{ doctor.description|default:"Опытный специалист с многолетним стажем работы."|truncatechars:80 }}
+
+                <!-- ОПИСАНИЕ -->
+
+                <p class="doctor-description text-muted small mb-3">
+
+                    {{ doctor.description|default:"Информация о специалисте пока не добавлена."|truncatechars:80 }}
+
                 </p>
+
             </div>
 
+
+            <!-- КНОПКА ЗАПИСИ -->
+
             <div>
-                <a href="{% url 'doctor_detail' doctor.id %}" class="btn w-100 py-2.5 fw-semibold text-white rounded-pill shadow-sm text-decoration-none" style="background-color: #0f172a; transition: all 0.2s;">
+
+                <a href="{% url 'doctor_detail' doctor.id %}"
+                   class="doctor-book-button btn w-100 fw-semibold text-white rounded-pill shadow-sm text-decoration-none"
+                   style="
+                        background-color:#0f172a;
+                        padding:10px 14px;
+                        transition:all .2s;
+                   ">
+
                     Подробнее / Записаться
+
                 </a>
+
             </div>
+
         </div>
+
     </div>
+
     {% empty %}
-    <div class="col-12 text-center py-5">
-        <div class="bento-card py-5">
-            <h4 class="text-muted mb-0">Пока нет зарегистрированных врачей</h4>
+
+        <div class="col-12 text-center py-5">
+
+            <div class="bento-card py-5">
+
+                <h4 class="text-muted mb-0">
+                    Пока нет зарегистрированных врачей
+                </h4>
+
+            </div>
+
         </div>
-    </div>
+
     {% endfor %}
 
 </div>
+
+
+<!-- =========================================
+     СТИЛИ КАТАЛОГА ВРАЧЕЙ
+========================================= -->
+
+<style>
+
+/* =========================================
+   ОБЩИЕ СТИЛИ
+========================================= */
+
+.doctors-hero {
+    border-radius: 28px;
+}
+
+.doctor-card {
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease,
+        background-color .25s ease;
+}
+
+.doctor-card:hover {
+    transform: translateY(-4px);
+}
+
+.doctor-photo {
+    background: #f1f5f9;
+}
+
+.doctor-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+}
+
+.doctor-name {
+    line-height: 1.35;
+}
+
+.doctor-book-button:hover {
+    background: #334155 !important;
+    color: white !important;
+}
+
+
+/* =========================================
+   ТЁМНАЯ ТЕМА — ВЕРХНИЙ БАННЕР
+========================================= */
+
+body.dark-theme .doctors-hero {
+    background: linear-gradient(
+        135deg,
+        #242b49 0%,
+        #30305a 100%
+    ) !important;
+
+    border: 1px solid rgba(
+        165, 180, 252, .2
+    ) !important;
+}
+
+/* Заголовок */
+
+body.dark-theme .doctors-hero h1 {
+    color: #f8fafc !important;
+}
+
+/* Описание */
+
+body.dark-theme .doctors-hero p {
+    color: #cbd5e1 !important;
+}
+
+
+/* =========================================
+   ТЁМНАЯ ТЕМА — КАРТОЧКИ ВРАЧЕЙ
+========================================= */
+
+body.dark-theme .doctor-card {
+    background: #202b44 !important;
+
+    border: 1px solid rgba(
+        165, 180, 252, .18
+    ) !important;
+
+    color: #f8fafc !important;
+}
+
+/* Имя врача */
+
+body.dark-theme .doctor-card .doctor-name {
+    color: #f8fafc !important;
+}
+
+/* Специализация */
+
+body.dark-theme .doctor-card .doctor-specialization {
+    color: #a5b4fc !important;
+}
+
+/* Опыт работы */
+
+body.dark-theme .doctor-card .doctor-experience {
+    color: #cbd5e1 !important;
+}
+
+/* Описание */
+
+body.dark-theme .doctor-card .doctor-description {
+    color: #cbd5e1 !important;
+}
+
+/* Изображение */
+
+body.dark-theme .doctor-card .doctor-photo {
+    background: #334155 !important;
+}
+
+/* Заглушка при отсутствии фотографии */
+
+body.dark-theme .doctor-photo .text-muted {
+    color: #cbd5e1 !important;
+}
+
+
+/* =========================================
+   ТЁМНАЯ ТЕМА — КНОПКА
+========================================= */
+
+body.dark-theme .doctor-book-button {
+    background: #6366f1 !important;
+
+    border: 1px solid #6366f1 !important;
+
+    color: #ffffff !important;
+}
+
+body.dark-theme .doctor-book-button:hover {
+    background: #818cf8 !important;
+
+    border-color: #818cf8 !important;
+}
+
+
+/* =========================================
+   ЭФФЕКТ ПРИ НАВЕДЕНИИ
+========================================= */
+
+body.dark-theme .doctor-card:hover {
+    border-color: rgba(
+        129, 140, 248, .5
+    ) !important;
+
+    box-shadow: 0 15px 30px rgba(
+        0, 0, 0, .2
+    ) !important;
+}
+
+
+/* =========================================
+   АДАПТИВНОСТЬ
+========================================= */
+
+@media (max-width: 768px) {
+
+    .doctors-hero {
+        padding: 26px 20px !important;
+    }
+
+    .doctors-hero h1 {
+        font-size: 28px;
+    }
+
+    .doctor-photo {
+        height: 300px !important;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .doctors-hero h1 {
+        font-size: 25px;
+    }
+
+    .doctors-hero p {
+        font-size: 13px;
+    }
+
+    .doctor-photo {
+        height: 280px !important;
+    }
+
+}
+
+</style>
+
 {% endblock %}

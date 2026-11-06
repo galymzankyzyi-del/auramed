@@ -1,0 +1,565 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}
+Мой кабинет — AuraMed
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .patient-dashboard {
+        color: var(--text-main);
+    }
+
+    .patient-heading {
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .patient-muted {
+        color: var(--text-muted);
+    }
+
+    .patient-stat {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 24px;
+        padding: 23px;
+        height: 100%;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .patient-stat-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        background: rgba(99, 102, 241, .12);
+        color: #6366f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .patient-stat-value {
+        font-size: 32px;
+        font-weight: 800;
+        margin-top: 12px;
+        line-height: 1.2;
+    }
+
+    .patient-section {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 28px;
+        padding: 26px;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .patient-appointment {
+        background: rgba(255,255,255,.85);
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 14px;
+    }
+
+    .patient-appointment:last-child {
+        margin-bottom: 0;
+    }
+
+    .patient-doctor-photo {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        object-fit: cover;
+        background: #eef2ff;
+    }
+
+    .patient-photo-placeholder {
+        width: 58px;
+        height: 58px;
+        border-radius: 17px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef2ff;
+        color: #6366f1;
+        font-size: 23px;
+    }
+
+    .patient-status {
+        display: inline-block;
+        border-radius: 30px;
+        padding: 6px 11px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .status-pending {
+        background: #fff7ed;
+        color: #9a3412;
+    }
+
+    .status-completed {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .status-cancelled {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .patient-cancel-btn {
+        padding: 9px 19px;
+        background: transparent;
+        border: 1px solid #ef4444;
+        color: #dc2626;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 700;
+        transition: .2s;
+    }
+
+    .patient-cancel-btn:hover {
+        background: #fef2f2;
+    }
+
+    .patient-divider {
+        border-color: rgba(148,163,184,.2);
+    }
+
+    .patient-empty {
+        padding: 32px 15px;
+        text-align: center;
+        color: var(--text-muted);
+    }
+
+    /* Тёмная тема */
+
+    body.dark-theme .patient-stat,
+    body.dark-theme .patient-section {
+        background: #19233b;
+        border-color: rgba(165,180,252,.16);
+    }
+
+    body.dark-theme .patient-appointment {
+        background: #202b44;
+        border-color: rgba(165,180,252,.18);
+        color: #f8fafc;
+    }
+
+    body.dark-theme .patient-appointment h5,
+    body.dark-theme .patient-section h3 {
+        color: #f8fafc;
+    }
+
+    body.dark-theme .patient-muted,
+    body.dark-theme .patient-appointment .text-muted {
+        color: #cbd5e1 !important;
+    }
+
+    body.dark-theme .patient-stat-icon,
+    body.dark-theme .patient-photo-placeholder {
+        background: #30375d;
+        color: #c7d2fe;
+    }
+
+    body.dark-theme .patient-cancel-btn {
+        border-color: #fca5a5;
+        color: #fecaca;
+    }
+
+    body.dark-theme .patient-cancel-btn:hover {
+        background: rgba(239,68,68,.12);
+    }
+
+    body.dark-theme .status-pending {
+        background: rgba(234,179,8,.14);
+        color: #fde68a;
+    }
+
+    body.dark-theme .status-completed {
+        background: rgba(16,185,129,.15);
+        color: #a7f3d0;
+    }
+
+    body.dark-theme .status-cancelled {
+        background: rgba(239,68,68,.15);
+        color: #fecaca;
+    }
+
+    @media (max-width: 768px) {
+        .patient-section {
+            padding: 18px;
+        }
+
+        .patient-appointment {
+            padding: 16px;
+        }
+
+        .patient-stat {
+            padding: 17px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="patient-dashboard">
+
+    <!-- Заголовок -->
+
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center gap-3 mb-4">
+
+        <div>
+            <span class="badge rounded-pill px-3 py-2 mb-3"
+                  style="background:rgba(99,102,241,.12);
+                         color:#818cf8;">
+                <i class="fas fa-heartbeat me-1"></i>
+                Кабинет пациента
+            </span>
+
+            <h1 class="patient-heading mb-2">
+                Моё здоровье
+            </h1>
+
+            <p class="patient-muted mb-0">
+                Здравствуйте,
+                {{ user.first_name|default:user.username }}!
+                Здесь находятся ваши записи к врачам.
+            </p>
+        </div>
+
+        <a href="{% url 'doctor_list' %}"
+           class="btn-bento-primary">
+            <i class="fas fa-plus me-2"></i>
+            Новая запись
+        </a>
+
+    </div>
+
+    <!-- Статистика -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-6 col-lg-4">
+            <div class="patient-stat">
+
+                <div class="patient-stat-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+
+                <div class="patient-stat-value">
+                    {{ upcoming_count }}
+                </div>
+
+                <div class="patient-muted small">
+                    Предстоящие приёмы
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-4">
+            <div class="patient-stat">
+
+                <div class="patient-stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+
+                <div class="patient-stat-value">
+                    {{ completed_count }}
+                </div>
+
+                <div class="patient-muted small">
+                    Завершённые
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="patient-stat">
+
+                <div class="patient-stat-icon">
+                    <i class="fas fa-calendar-times"></i>
+                </div>
+
+                <div class="patient-stat-value">
+                    {{ cancelled_count }}
+                </div>
+
+                <div class="patient-muted small">
+                    Отменённые
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Предстоящие приёмы -->
+
+    <div class="patient-section mb-4">
+
+        <h3 class="fw-bold mb-1">
+            <i class="fas fa-calendar-alt text-primary me-2"></i>
+            Предстоящие приёмы
+        </h3>
+
+        <p class="patient-muted small mb-4">
+            Ваши активные записи к специалистам
+        </p>
+
+        {% for appointment in upcoming_appointments %}
+
+        <div class="patient-appointment">
+
+            <div class="d-flex flex-wrap justify-content-between
+                        align-items-start gap-3 mb-3">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    {% if appointment.doctor.image %}
+                        <img
+                            src="{{ appointment.doctor.image.url }}"
+                            alt="{{ appointment.doctor.name }}"
+                            class="patient-doctor-photo">
+                    {% else %}
+                        <div class="patient-photo-placeholder">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                    {% endif %}
+
+                    <div>
+                        <h5 class="fw-bold mb-1">
+                            {{ appointment.doctor.name }}
+                        </h5>
+
+                        <div class="patient-muted small">
+                            {{ appointment.doctor.specialization }}
+                        </div>
+                    </div>
+
+                </div>
+
+                <span class="patient-status status-pending">
+                    Ожидает
+                </span>
+
+            </div>
+
+            <hr class="patient-divider">
+
+            <div class="row g-3 align-items-center">
+
+                <div class="col-md-3">
+                    <div class="patient-muted small">
+                        Дата приёма
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ appointment.date|date:"d.m.Y" }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="patient-muted small">
+                        Время
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ appointment.time|time:"H:i" }}
+                    </div>
+                </div>
+
+                <div class="col-md-6 text-md-end">
+
+                    <form method="post"
+                          action="{% url 'patient_cancel_appointment' appointment.id %}"
+                          onsubmit="return confirm('Отменить эту запись на приём?');">
+
+                        {% csrf_token %}
+
+                        <button type="submit"
+                                class="patient-cancel-btn">
+                            <i class="fas fa-times me-1"></i>
+                            Отменить запись
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="patient-empty">
+
+            <i class="fas fa-calendar-plus fa-2x mb-3"></i>
+
+            <p>
+                У вас пока нет предстоящих приёмов.
+            </p>
+
+            <a href="{% url 'doctor_list' %}"
+               class="btn-bento-primary">
+                Выбрать врача
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- Завершённые приёмы -->
+
+    <div class="patient-section mb-4">
+
+        <h3 class="fw-bold mb-1">
+            <i class="fas fa-check-circle text-success me-2"></i>
+            История посещений
+        </h3>
+
+        <p class="patient-muted small mb-4">
+            Приёмы, завершённые врачом
+        </p>
+
+        {% for appointment in completed_appointments %}
+
+        <div class="patient-appointment">
+
+            <div class="d-flex flex-wrap justify-content-between
+                        align-items-center gap-3">
+
+                <div>
+                    <h5 class="fw-bold mb-1">
+                        {{ appointment.doctor.name }}
+                    </h5>
+
+                    <div class="patient-muted small">
+                        {{ appointment.doctor.specialization }}
+                        ·
+                        {{ appointment.date|date:"d.m.Y" }}
+                        ·
+                        {{ appointment.time|time:"H:i" }}
+                    </div>
+                </div>
+
+                <span class="patient-status status-completed">
+                    Завершён
+                </span>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <p class="patient-muted mb-0">
+            Завершённых приёмов пока нет.
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- Отменённые записи -->
+
+    <div class="patient-section mb-4">
+
+        <h3 class="fw-bold mb-1">
+            <i class="fas fa-calendar-times text-danger me-2"></i>
+            Отменённые записи
+        </h3>
+
+        <p class="patient-muted small mb-4">
+            История отменённых приёмов
+        </p>
+
+        {% for appointment in cancelled_appointments %}
+
+        <div class="patient-appointment">
+
+            <div class="d-flex flex-wrap justify-content-between
+                        align-items-center gap-3">
+
+                <div>
+                    <h5 class="fw-bold mb-1">
+                        {{ appointment.doctor.name }}
+                    </h5>
+
+                    <div class="patient-muted small">
+                        {{ appointment.date|date:"d.m.Y" }}
+                        ·
+                        {{ appointment.time|time:"H:i" }}
+                    </div>
+                </div>
+
+                <span class="patient-status status-cancelled">
+                    Отменён
+                </span>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <p class="patient-muted mb-0">
+            Отменённых записей нет.
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- Прошедшие записи без завершённого статуса -->
+
+    {% if past_pending_appointments %}
+
+    <div class="patient-section mb-4">
+
+        <h3 class="fw-bold mb-3">
+            Прошедшие записи
+        </h3>
+
+        <p class="patient-muted small">
+            Эти приёмы уже прошли по дате,
+            но их статус пока не обновлён врачом.
+        </p>
+
+        {% for appointment in past_pending_appointments %}
+
+        <div class="patient-appointment">
+
+            <div class="fw-semibold">
+                {{ appointment.doctor.name }}
+            </div>
+
+            <div class="patient-muted small">
+                {{ appointment.date|date:"d.m.Y" }}
+                ·
+                {{ appointment.time|time:"H:i" }}
+                · Ожидает обновления статуса
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

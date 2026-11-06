@@ -1,0 +1,807 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}
+Панель администратора — AuraMed
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-dashboard {
+        --adm-text: #1e293b;
+        --adm-muted: #64748b;
+        --adm-surface: rgba(255, 255, 255, 0.86);
+        --adm-border: rgba(226, 232, 240, 0.85);
+        color: var(--adm-text);
+    }
+
+    .admin-dashboard .admin-heading {
+        font-size: clamp(26px, 4vw, 38px);
+        font-weight: 800;
+        letter-spacing: -1.2px;
+        overflow-wrap: anywhere;
+    }
+
+    .admin-dashboard .admin-muted {
+        color: var(--adm-muted);
+    }
+
+    .admin-dashboard .admin-card {
+        background: var(--adm-surface);
+        border: 1px solid var(--adm-border);
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 12px 35px rgba(31, 41, 55, 0.035);
+        height: 100%;
+    }
+
+    .admin-dashboard .stat-value {
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -1px;
+        margin: 10px 0 2px;
+    }
+
+    .admin-dashboard .stat-label {
+        color: var(--adm-muted);
+        font-size: 13px;
+    }
+
+    .admin-dashboard .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    /* Карточки управления */
+
+    .admin-dashboard .admin-action {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: var(--adm-surface);
+        border: 1px solid var(--adm-border);
+        border-radius: 18px;
+        padding: 18px 16px;
+        color: var(--adm-text);
+        text-decoration: none;
+        transition: 0.2s;
+        height: 100%;
+        min-height: 94px;
+    }
+
+    .admin-dashboard .admin-action:hover {
+        transform: translateY(-3px);
+        border-color: #a5b4fc;
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.08);
+        color: var(--adm-text);
+    }
+
+    .admin-dashboard .admin-action:focus-visible {
+        outline: 3px solid #818cf8;
+        outline-offset: 3px;
+    }
+
+    .admin-dashboard .action-icon {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        border-radius: 14px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .admin-dashboard .action-text {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .admin-dashboard .action-title {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .admin-dashboard .action-description {
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--adm-muted);
+    }
+
+    .admin-dashboard .action-arrow {
+        flex-shrink: 0;
+        font-size: 12px;
+        color: var(--adm-muted);
+        transition: transform .2s;
+    }
+
+    .admin-dashboard .admin-action:hover .action-arrow {
+        transform: translateX(3px);
+        color: #6366f1;
+    }
+
+    /* Таблицы */
+
+    .admin-dashboard .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .admin-dashboard .admin-table th {
+        color: var(--adm-muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        font-weight: 700;
+        padding: 14px;
+        border-bottom: 1px solid var(--adm-border);
+        white-space: nowrap;
+    }
+
+    .admin-dashboard .admin-table td {
+        padding: 15px 14px;
+        font-size: 13px;
+        border-bottom: 1px solid var(--adm-border);
+        vertical-align: middle;
+    }
+
+    .admin-dashboard .admin-table tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .admin-dashboard .status-pill {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 6px 11px;
+        border-radius: 30px;
+        white-space: nowrap;
+    }
+
+    .admin-dashboard .status-pending {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .admin-dashboard .status-completed {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .admin-dashboard .status-cancelled {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    /* Тёмная тема */
+
+    body.dark-theme .admin-dashboard {
+        --adm-text: #f8fafc;
+        --adm-muted: #94a3b8;
+        --adm-surface: rgba(30, 41, 59, 0.92);
+        --adm-border: rgba(148, 163, 184, 0.18);
+    }
+
+    body.dark-theme .admin-dashboard .stat-icon,
+    body.dark-theme .admin-dashboard .action-icon {
+        background: rgba(99, 102, 241, .18);
+        color: #a5b4fc;
+    }
+
+    body.dark-theme .admin-dashboard .admin-action:hover {
+        border-color: #818cf8;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
+    }
+
+    body.dark-theme .admin-dashboard .status-pending {
+        background: rgba(234, 88, 12, .15);
+        color: #fdba74;
+    }
+
+    body.dark-theme .admin-dashboard .status-completed {
+        background: rgba(5, 150, 105, .15);
+        color: #6ee7b7;
+    }
+
+    body.dark-theme .admin-dashboard .status-cancelled {
+        background: rgba(220, 38, 38, .15);
+        color: #fca5a5;
+    }
+
+    body.dark-theme .admin-dashboard .date-badge {
+        background: #202b44 !important;
+        border-color: #475569 !important;
+        color: #f8fafc !important;
+    }
+
+    body.dark-theme .admin-dashboard .admin-action {
+        color: #f8fafc;
+    }
+
+    /* Адаптивность */
+
+    @media (max-width: 768px) {
+        .admin-dashboard .admin-card {
+            padding: 18px;
+            border-radius: 20px;
+        }
+
+        .admin-dashboard .stat-value {
+            font-size: 27px;
+        }
+
+        .admin-dashboard .admin-action {
+            min-height: 82px;
+            padding: 15px;
+        }
+
+        .admin-dashboard .admin-heading {
+            letter-spacing: -.7px;
+        }
+
+        .admin-dashboard .admin-table {
+            min-width: 560px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .admin-dashboard .stat-label {
+            font-size: 11px;
+        }
+
+        .admin-dashboard .stat-icon {
+            width: 38px;
+            height: 38px;
+        }
+
+        .admin-dashboard .action-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .admin-dashboard .action-title {
+            font-size: 14px;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <!-- ====================================
+         ЗАГОЛОВОК
+    ===================================== -->
+
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center gap-3 mb-4">
+
+        <div>
+            <span class="badge rounded-pill px-3 py-2 mb-3"
+                  style="background:#eae8ff;color:#4f46e5;">
+                <i class="fas fa-shield-alt me-1"></i>
+                Управление клиникой
+            </span>
+
+            <h1 class="admin-heading mb-2">
+                Панель администратора
+            </h1>
+
+            <p class="admin-muted mb-0">
+                Обзор работы AuraMed и управление данными
+            </p>
+        </div>
+
+        <div>
+            <span class="badge bg-white text-dark border
+                         rounded-pill px-3 py-3 date-badge">
+                <i class="far fa-calendar me-2"></i>
+                {{ today|date:"d.m.Y" }}
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- ====================================
+         СТАТИСТИКА
+    ===================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Врачи -->
+
+        <div class="col-6 col-lg-3">
+            <div class="admin-card">
+                <div class="stat-icon">
+                    <i class="fas fa-user-md"></i>
+                </div>
+
+                <div class="stat-value">
+                    {{ total_doctors }}
+                </div>
+
+                <div class="stat-label">
+                    Врачей
+                </div>
+            </div>
+        </div>
+
+        <!-- Пациенты -->
+
+        <div class="col-6 col-lg-3">
+            <div class="admin-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+
+                <div class="stat-value">
+                    {{ total_patients }}
+                </div>
+
+                <div class="stat-label">
+                    Аккаунтов пациентов
+                </div>
+            </div>
+        </div>
+
+        <!-- Записи -->
+
+        <div class="col-6 col-lg-3">
+            <div class="admin-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+
+                <div class="stat-value">
+                    {{ total_appointments }}
+                </div>
+
+                <div class="stat-label">
+                    Всего записей
+                </div>
+            </div>
+        </div>
+
+        <!-- Сегодня -->
+
+        <div class="col-6 col-lg-3">
+            <div class="admin-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+
+                <div class="stat-value">
+                    {{ today_count }}
+                </div>
+
+                <div class="stat-label">
+                    Приёмов сегодня
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ====================================
+         УПРАВЛЕНИЕ
+    ===================================== -->
+
+    <div class="d-flex justify-content-between
+                align-items-center mb-3 mt-4">
+
+        <h4 class="fw-bold mb-0">
+            Управление
+        </h4>
+
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <!-- Управление врачами -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <a href="{% url 'admin_doctors' %}"
+               class="admin-action">
+
+                <div class="action-icon">
+                    <i class="fas fa-user-md"></i>
+                </div>
+
+                <div class="action-text">
+                    <div class="action-title">
+                        Врачи
+                    </div>
+
+                    <div class="action-description">
+                        Профили и расписания
+                    </div>
+                </div>
+
+                <i class="fas fa-chevron-right action-arrow"></i>
+
+            </a>
+
+        </div>
+
+
+        <!-- Управление пользователями -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <a href="{% url 'admin:auth_user_changelist' %}"
+               class="admin-action">
+
+                <div class="action-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+
+                <div class="action-text">
+                    <div class="action-title">
+                        Пользователи
+                    </div>
+
+                    <div class="action-description">
+                        Аккаунты и права доступа
+                    </div>
+                </div>
+
+                <i class="fas fa-chevron-right action-arrow"></i>
+
+            </a>
+
+        </div>
+
+
+        <!-- Управление записями -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <a href="{% url 'admin:doctors_appointment_changelist' %}"
+               class="admin-action">
+
+                <div class="action-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+
+                <div class="action-text">
+                    <div class="action-title">
+                        Записи
+                    </div>
+
+                    <div class="action-description">
+                        Все приёмы клиники
+                    </div>
+                </div>
+
+                <i class="fas fa-chevron-right action-arrow"></i>
+
+            </a>
+
+        </div>
+
+
+        <!-- НОВОЕ: Управление услугами -->
+
+        <div class="col-12 col-md-6 col-xl-3">
+
+            <a href="{% url 'admin_services' %}"
+               class="admin-action">
+
+                <div class="action-icon">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+
+                <div class="action-text">
+                    <div class="action-title">
+                        Услуги
+                    </div>
+
+                    <div class="action-description">
+                        Каталог, цены и специалисты
+                    </div>
+                </div>
+
+                <i class="fas fa-chevron-right action-arrow"></i>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================
+         СОСТОЯНИЕ ЗАПИСЕЙ
+    ===================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Ожидающие -->
+
+        <div class="col-md-4">
+            <div class="admin-card">
+
+                <div class="small admin-muted mb-2">
+                    Ожидают приёма
+                </div>
+
+                <div class="d-flex align-items-center
+                            justify-content-between gap-2">
+
+                    <h2 class="fw-bold mb-0">
+                        {{ pending_count }}
+                    </h2>
+
+                    <span class="status-pill status-pending">
+                        Ожидают
+                    </span>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Завершённые -->
+
+        <div class="col-md-4">
+            <div class="admin-card">
+
+                <div class="small admin-muted mb-2">
+                    Завершённые приёмы
+                </div>
+
+                <div class="d-flex align-items-center
+                            justify-content-between gap-2">
+
+                    <h2 class="fw-bold mb-0">
+                        {{ completed_count }}
+                    </h2>
+
+                    <span class="status-pill status-completed">
+                        Завершены
+                    </span>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Отменённые -->
+
+        <div class="col-md-4">
+            <div class="admin-card">
+
+                <div class="small admin-muted mb-2">
+                    Отменённые приёмы
+                </div>
+
+                <div class="d-flex align-items-center
+                            justify-content-between gap-2">
+
+                    <h2 class="fw-bold mb-0">
+                        {{ cancelled_count }}
+                    </h2>
+
+                    <span class="status-pill status-cancelled">
+                        Отменены
+                    </span>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ====================================
+         БЛИЖАЙШИЕ ПРИЁМЫ
+    ===================================== -->
+
+    <div class="admin-card mb-4">
+
+        <div class="d-flex flex-wrap justify-content-between
+                    align-items-center gap-2 mb-3">
+
+            <div>
+                <h5 class="fw-bold mb-1">
+                    Ближайшие приёмы
+                </h5>
+
+                <p class="small admin-muted mb-0">
+                    Предстоящие записи пациентов
+                </p>
+            </div>
+
+            <a href="{% url 'admin:doctors_appointment_changelist' %}"
+               class="btn btn-outline-secondary rounded-pill btn-sm">
+
+                Все записи
+                <i class="fas fa-arrow-right ms-1"></i>
+
+            </a>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="admin-table">
+
+                <thead>
+                    <tr>
+                        <th>Пациент</th>
+                        <th>Врач</th>
+                        <th>Дата</th>
+                        <th>Время</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for appointment in upcoming_appointments %}
+
+                    <tr>
+
+                        <td class="fw-semibold">
+                            {{ appointment.patient_name }}
+                        </td>
+
+                        <td>
+                            {{ appointment.doctor.name }}
+                        </td>
+
+                        <td>
+                            {{ appointment.date|date:"d.m.Y" }}
+                        </td>
+
+                        <td>
+                            {{ appointment.time|time:"H:i" }}
+                        </td>
+
+                        <td>
+                            <span class="status-pill status-pending">
+                                Ожидает
+                            </span>
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="5"
+                            class="text-center admin-muted py-4">
+
+                            Предстоящих записей пока нет
+
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- ====================================
+         ПОСЛЕДНИЕ ЗАПИСИ
+    ===================================== -->
+
+    <div class="admin-card mb-4">
+
+        <div class="d-flex flex-wrap justify-content-between
+                    align-items-center gap-2 mb-3">
+
+            <div>
+                <h5 class="fw-bold mb-1">
+                    Последние записи
+                </h5>
+
+                <p class="small admin-muted mb-0">
+                    Недавно созданные записи на приём
+                </p>
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="admin-table">
+
+                <thead>
+                    <tr>
+                        <th>Пациент</th>
+                        <th>Врач</th>
+                        <th>Дата приёма</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for appointment in recent_appointments %}
+
+                    <tr>
+
+                        <td class="fw-semibold">
+                            {{ appointment.patient_name }}
+                        </td>
+
+                        <td>
+                            {{ appointment.doctor.name }}
+                        </td>
+
+                        <td>
+                            {{ appointment.date|date:"d.m.Y" }}
+                            ·
+                            {{ appointment.time|time:"H:i" }}
+                        </td>
+
+                        <td>
+
+                            {% if appointment.status == 'completed' %}
+
+                            <span class="status-pill status-completed">
+                                Завершён
+                            </span>
+
+                            {% elif appointment.status == 'cancelled' %}
+
+                            <span class="status-pill status-cancelled">
+                                Отменён
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-pill status-pending">
+                                Ожидает
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="4"
+                            class="text-center admin-muted py-4">
+
+                            Записей пока нет
+
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

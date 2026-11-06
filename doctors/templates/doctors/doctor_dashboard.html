@@ -1,106 +1,309 @@
+
 {% extends 'main/base.html' %}
 
-{% block title %}Личный кабинет врача — AuraMed{% endblock %}
+{% block title %}Кабинет врача — AuraMed{% endblock %}
 
 {% block content %}
 <div class="row g-4">
-    
-    <!-- Шапка кабинета врача -->
+
+    <!-- Шапка -->
     <div class="col-12">
-        <div class="bento-card py-4 px-5 d-flex justify-content-between align-items-center flex-wrap gap-3" 
-             style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(238,242,255,0.85) 100%);">
+        <div class="bento-card py-4 px-5 d-flex justify-content-between align-items-center flex-wrap gap-3"
+             style="background: linear-gradient(135deg, #fff, #eef2ff);">
             <div>
-                <span class="badge px-3 py-1 rounded-pill mb-2 fw-medium" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                    <i class="fas fa-circle text-success fs-6 me-1" style="font-size: 8px;"></i> Врач в сети
+                <span class="badge bg-success-subtle text-success rounded-pill mb-2 px-3 py-2">
+                    Кабинет врача
                 </span>
-                <h2 class="fw-bold mb-1" style="letter-spacing: -1px;">Кабинет специалиста: {{ doctor.name|default:doctor.user.username }}</h2>
-                <p class="text-muted mb-0">Специализация: <b>{{ doctor.specialization|default:"Врач-терапевт" }}</b></p>
+                <h2 class="fw-bold mb-1">
+                    {{ doctor.name }}
+                </h2>
+                <p class="text-muted mb-0">
+                    {{ doctor.specialization }}
+                </p>
             </div>
-            <div>
-                <a href="{% url 'edit_profile' %}" class="btn btn-dark rounded-pill px-4 py-2 shadow-sm text-decoration-none">
-                    <i class="fas fa-user-edit me-2"></i> Редактировать профиль
+
+            <a href="{% url 'edit_profile' %}"
+               class="btn btn-dark rounded-pill px-4">
+                <i class="fas fa-user-edit me-2"></i>
+                Редактировать профиль
+            </a>
+        </div>
+    </div>
+
+    <!-- Вкладки -->
+    <div class="col-12">
+        <div class="bento-card p-3">
+            <div class="d-flex flex-wrap gap-2">
+
+                <a href="{% url 'doctor_dashboard' doctor.id %}?view=pending"
+                   class="btn rounded-pill px-4
+                   {% if current_view == 'pending' %}
+                       btn-primary
+                   {% else %}
+                       btn-outline-primary
+                   {% endif %}">
+                    <i class="fas fa-calendar-check me-1"></i>
+                    Активные
+                    <span class="badge bg-light text-dark ms-1">
+                        {{ counts.pending }}
+                    </span>
                 </a>
+
+                <a href="{% url 'doctor_dashboard' doctor.id %}?view=completed"
+                   class="btn rounded-pill px-4
+                   {% if current_view == 'completed' %}
+                       btn-success
+                   {% else %}
+                       btn-outline-success
+                   {% endif %}">
+                    <i class="fas fa-check-circle me-1"></i>
+                    Завершённые
+                    <span class="badge bg-light text-dark ms-1">
+                        {{ counts.completed }}
+                    </span>
+                </a>
+
+                <a href="{% url 'doctor_dashboard' doctor.id %}?view=cancelled"
+                   class="btn rounded-pill px-4
+                   {% if current_view == 'cancelled' %}
+                       btn-danger
+                   {% else %}
+                       btn-outline-danger
+                   {% endif %}">
+                    <i class="fas fa-times-circle me-1"></i>
+                    Отменённые
+                    <span class="badge bg-light text-dark ms-1">
+                        {{ counts.cancelled }}
+                    </span>
+                </a>
+
             </div>
         </div>
     </div>
 
-    <!-- Фильтр по датам и быстрые подсказки -->
-    <!-- Быстрые фильтры дат прямо в кабинете -->
+    <!-- Выбор даты только для активных записей -->
+    
+<!-- Фильтрация активных записей -->
+{% if current_view == 'pending' %}
 <div class="col-12">
-    <div class="bento-card p-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
-        <div class="d-flex align-items-center gap-2">
-            <span class="text-muted fw-semibold small">Быстрый выбор:</span>
-            <a href="?date={{ today }}" class="btn btn-sm btn-dark rounded-pill px-3">Сегодня</a>
-            <!-- Форма ручного выбора даты -->
-            <form method="get" class="d-inline-block m-0">
-                <input type="date" name="date" value="{{ selected_date }}" class="form-control form-control-sm rounded-pill px-3 border-0 bg-light shadow-sm" onchange="this.form.submit()">
-            </form>
-        </div>
-        <div>
-            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-medium">
-                <i class="fas fa-stethoscope me-1"></i> Активных записей: {{ appointments|length }}
-            </span>
-        </div>
+    <div class="bento-card p-4">
+        <form method="get"
+              action="{% url 'doctor_dashboard' doctor.id %}"
+              class="row g-3 align-items-end">
+
+            <input type="hidden" name="view" value="pending">
+
+            <!-- Фильтр по дате -->
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">
+                    Показать записи
+                </label>
+                <select name="date_filter"
+                        class="form-select rounded-pill"
+                        onchange="this.form.submit()">
+
+                    <option value="all"
+                        {% if date_filter == 'all' %}selected{% endif %}>
+                        Все активные записи
+                    </option>
+
+                    <option value="today"
+                        {% if date_filter == 'today' %}selected{% endif %}>
+                        Сегодня
+                    </option>
+
+                    <option value="date"
+                        {% if date_filter == 'date' %}selected{% endif %}>
+                        По выбранной дате
+                    </option>
+                </select>
+            </div>
+
+            <!-- Дата -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">
+                    Выберите дату
+                </label>
+                <input type="date"
+                       name="date"
+                       value="{{ selected_date }}"
+                       class="form-control rounded-pill"
+                       onchange="this.form.submit()">
+            </div>
+
+            <!-- Сортировка -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">
+                    Сортировка
+                </label>
+                <select name="sort"
+                        class="form-select rounded-pill"
+                        onchange="this.form.submit()">
+
+                    <option value="nearest"
+                        {% if sort_by == 'nearest' %}selected{% endif %}>
+                        Ближайшие приёмы
+                    </option>
+
+                    <option value="newest"
+                        {% if sort_by == 'newest' %}selected{% endif %}>
+                        Самые новые записи
+                    </option>
+
+                    <option value="latest"
+                        {% if sort_by == 'latest' %}selected{% endif %}>
+                        Самые дальние приёмы
+                    </option>
+                </select>
+            </div>
+
+            <!-- Кнопка -->
+            <div class="col-md-2">
+                <button type="submit"
+                        class="btn btn-primary rounded-pill w-100">
+                    Применить
+                </button>
+            </div>
+        </form>
     </div>
 </div>
+{% endif %}
 
-    <!-- Таблица записей пациентов -->
+
+    <!-- Таблица записей -->
     <div class="col-12">
         <div class="bento-card p-4">
-            <h3 class="fw-bold mb-4" style="letter-spacing: -0.5px;">Пациенты на {{ selected_date }}</h3>
-            
+
+            <h3 class="fw-bold mb-4">
+                {% if date_filter == 'today' %}
+                Активные записи на сегодня
+            {% elif date_filter == 'date' and selected_date %}
+                Активные записи на {{ selected_date }}
+            {% else %}
+                Все активные записи
+            {% endif %}
+            </h3>
+
             <div class="table-responsive">
-                <table class="table align-middle table-borderless mb-0">
+                <table class="table align-middle table-borderless">
+
                     <thead>
                         <tr class="text-muted small text-uppercase border-bottom">
-                            <th class="pb-3">Время</th>
-                            <th class="pb-3">Пациент</th>
-                            <th class="pb-3">Телефон</th>
-                            <th class="pb-3">Комментарий</th>
-                            <th class="pb-3">Статус</th>
-                            <th class="pb-3 text-end">Изменить статус</th>
+                            <th>Дата</th>
+                            <th>Время</th>
+                            <th>Пациент</th>
+                            <th>Телефон</th>
+                            <th>Комментарий</th>
+                            <th>Статус</th>
+
+                            {% if current_view == 'pending' %}
+                                <th class="text-end">Действия</th>
+                            {% endif %}
                         </tr>
                     </thead>
+
                     <tbody>
                         {% for app in appointments %}
                         <tr class="border-bottom border-light">
-                            <td class="py-3 fw-bold text-primary fs-5">{{ app.time }}</td>
+
                             <td class="py-3">
-                                <div class="fw-semibold text-dark">{{ app.patient_name }}</div>
-                                <small class="text-muted">Запись #{{ app.id }}</small>
+                                {{ app.date|date:"d.m.Y" }}
                             </td>
-                            <td class="py-3 text-muted">{{ app.patient_phone }}</td>
-                            <td class="py-3 text-muted small" style="max-width: 200px;">{{ app.comment|default:"Нет комментариев" }}</td>
+
+                            <td class="py-3 fw-bold text-primary">
+                                {{ app.time|time:"H:i" }}
+                            </td>
+
+                            <td class="py-3">
+                                <div class="fw-semibold">
+                                    {{ app.patient_name }}
+                                </div>
+                                <small class="text-muted">
+                                    Запись #{{ app.id }}
+                                </small>
+                            </td>
+
+                            <td class="py-3">
+                                {{ app.patient_phone }}
+                            </td>
+
+                            <td class="py-3 text-muted small">
+                                {{ app.comment|default:"Нет комментариев" }}
+                            </td>
+
                             <td class="py-3">
                                 {% if app.status == 'pending' %}
-                                    <span class="badge bg-warning-subtle text-warning px-3 py-1 rounded-pill">Ожидает</span>
+                                    <span class="badge bg-warning-subtle text-warning rounded-pill px-3">
+                                        Ожидает
+                                    </span>
                                 {% elif app.status == 'completed' %}
-                                    <span class="badge bg-success-subtle text-success px-3 py-1 rounded-pill">Завершен</span>
-                                {% else %}
-                                    <span class="badge bg-danger-subtle text-danger px-3 py-1 rounded-pill">Отменен</span>
+                                    <span class="badge bg-success-subtle text-success rounded-pill px-3">
+                                        Завершён
+                                    </span>
+                                {% elif app.status == 'cancelled' %}
+                                    <span class="badge bg-danger-subtle text-danger rounded-pill px-3">
+                                        Отменён
+                                    </span>
                                 {% endif %}
                             </td>
+
+                            {% if current_view == 'pending' %}
                             <td class="py-3 text-end">
-                                <form action="{% url 'update_appointment_status' app.id %}" method="post" class="d-inline-flex gap-1 justify-content-end">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="status" value="completed">
-                                    <button type="submit" class="btn btn-sm btn-success rounded-pill px-2" title="Завершить приём"><i class="fas fa-check"></i></button>
-                                </form>
-                                <form action="{% url 'update_appointment_status' app.id %}" method="post" class="d-inline-flex gap-1 justify-content-end">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="status" value="cancelled">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2" title="Отменить"><i class="fas fa-times"></i></button>
-                                </form>
+                                <div class="d-flex gap-2 justify-content-end">
+
+                                    <!-- Завершить -->
+                                    <form method="post"
+                                          action="{% url 'update_appointment_status' app.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden"
+                                               name="status"
+                                               value="completed">
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-success rounded-circle"
+                                                title="Завершить приём"
+                                                onclick="return confirm('Завершить приём?')">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+
+                                    <!-- Отменить -->
+                                    <form method="post"
+                                          action="{% url 'update_appointment_status' app.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden"
+                                               name="status"
+                                               value="cancelled">
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger rounded-circle"
+                                                title="Отменить запись"
+                                                onclick="return confirm('Отменить запись?')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
+
+                                </div>
                             </td>
+                            {% endif %}
+
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">
-                                На выбранную дату ({{ selected_date }}) записей пациентов не обнаружено.
+                            <td colspan="7"
+                                class="text-center py-5 text-muted">
+                                {% if current_view == 'completed' %}
+                                    Завершённых приёмов пока нет.
+                                {% elif current_view == 'cancelled' %}
+                                    Отменённых записей пока нет.
+                                {% else %}
+                                    На выбранную дату активных записей нет.
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
+
                 </table>
             </div>
         </div>

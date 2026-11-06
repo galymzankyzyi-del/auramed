@@ -37,7 +37,13 @@
 
                 <form method="POST" id="appointmentForm">
                     {% csrf_token %}
-                    
+                    {% if selected_service %}
+                        <input
+                            type="hidden"
+                            name="medical_service"
+                            value="{{ selected_service.id }}"
+                        >
+                        {% endif %}
                     <div class="mb-3">
                         <label for="patient_name" class="form-label fw-semibold text-dark">Ваше имя и фамилия</label>
                         <input type="text" class="form-control rounded-4 py-3 px-3 border-light bg-light" id="patient_name" name="patient_name" required placeholder="Например: Арман Сериков" value="{{ request.user.get_full_name }}">
@@ -63,10 +69,126 @@
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="comment" class="form-label fw-semibold text-dark">Причина обращения / Жалобы (необязательно)</label>
-                        <textarea class="form-control rounded-4 py-3 px-3 border-light bg-light" id="comment" name="comment" rows="3" placeholder="Опишите коротко свои симптомы"></textarea>
-                    </div>
+                   
+<!-- ====================================
+     ГОТОВЫЕ ЖАЛОБЫ ПАЦИЕНТА
+===================================== -->
+
+<div class="mb-4">
+
+    <h5 class="fw-bold complaint-heading mb-2">
+        Причина обращения
+    </h5>
+
+    <p class="complaint-hint small mb-3">
+        Выберите жалобы, которые вас беспокоят.
+        Можно отметить несколько вариантов.
+    </p>
+
+    <div class="row g-2">
+
+        {% for complaint in complaint_options %}
+
+        <div class="col-12 col-md-6">
+
+            <label class="complaint-option">
+
+                <input
+                    type="checkbox"
+                    name="complaints"
+                    value="{{ complaint }}"
+                    class="complaint-checkbox"
+                >
+
+                <span class="complaint-check-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+
+                <span class="complaint-text">
+                    {{ complaint }}
+                </span>
+
+            </label>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<!-- ====================================
+     ПРОДОЛЖИТЕЛЬНОСТЬ СИМПТОМОВ
+===================================== -->
+
+<div class="mb-4">
+
+    <label for="symptom_duration"
+           class="form-label fw-semibold complaint-heading">
+
+        Как давно появились симптомы?
+        <span class="fw-normal complaint-hint">
+            (необязательно)
+        </span>
+
+    </label>
+
+    <select
+        id="symptom_duration"
+        name="symptom_duration"
+        class="form-select rounded-4 py-3 px-3 complaint-input"
+    >
+
+        <option value="">
+            Не выбрано
+        </option>
+
+        <option value="today">Сегодня</option>
+        <option value="2-3-days">2–3 дня</option>
+        <option value="week">Около недели</option>
+        <option value="month">Около месяца</option>
+        <option value="long">Более месяца</option>
+
+    </select>
+
+</div>
+
+
+<!-- ====================================
+     ДОПОЛНИТЕЛЬНЫЙ КОММЕНТАРИЙ
+===================================== -->
+
+            <div class="mb-4">
+
+                <label for="comment_extra"
+                    class="form-label fw-semibold complaint-heading">
+
+                    Дополнительный комментарий
+
+                    <span class="fw-normal complaint-hint">
+                        (необязательно)
+                    </span>
+
+                </label>
+
+                <textarea
+                    id="comment_extra"
+                    name="comment_extra"
+                    rows="3"
+                    maxlength="1000"
+                    class="form-control rounded-4 py-3 px-3 complaint-input"
+                    placeholder="Если нужного варианта нет, опишите причину обращения своими словами"
+                ></textarea>
+
+                <small class="complaint-hint d-block mt-2">
+                    Информация будет доступна специалисту
+                    для подготовки к приёму.
+                </small>
+
+            </div>
+
 
                     <button type="submit" class="btn w-100 py-3 fw-bold text-white rounded-pill shadow-sm" style="background-color: #0f172a; transition: all 0.2s;">
                         <i class="fas fa-check-circle me-2"></i> Подтвердить запись
@@ -123,6 +245,171 @@
     button[type="submit"]:hover {
         background-color: #1e293b !important;
     }
+
+    
+/* ========================================
+   AURAMED — ВЫБОР ЖАЛОБ
+======================================== */
+
+.complaint-heading {
+    color: #1e293b;
+}
+
+.complaint-hint {
+    color: #64748b;
+}
+
+.complaint-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 64px;
+    height: 100%;
+    padding: 15px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.complaint-option:hover {
+    border-color: #a5b4fc;
+    background: #f1f2ff;
+}
+
+.complaint-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.complaint-check-icon {
+    flex-shrink: 0;
+    width: 23px;
+    height: 23px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #cbd5e1;
+    border-radius: 7px;
+    background: white;
+    color: transparent;
+    font-size: 11px;
+    transition: .2s;
+}
+
+.complaint-text {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.complaint-option:has(
+    .complaint-checkbox:checked
+) {
+    background: #eef2ff;
+    border-color: #6366f1;
+}
+
+.complaint-checkbox:checked
++ .complaint-check-icon {
+    background: #6366f1;
+    border-color: #6366f1;
+    color: white;
+}
+
+.complaint-option:has(
+    .complaint-checkbox:focus-visible
+) {
+    outline: 3px solid #a5b4fc;
+    outline-offset: 2px;
+}
+
+.complaint-input {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+}
+
+/* ========================================
+   ТЁМНАЯ ТЕМА
+======================================== */
+
+body.dark-theme .complaint-heading {
+    color: #f8fafc !important;
+}
+
+body.dark-theme .complaint-hint {
+    color: #cbd5e1 !important;
+}
+
+body.dark-theme .complaint-option {
+    background: #202b44;
+    border-color: #3b4565;
+}
+
+body.dark-theme .complaint-option:hover {
+    background: #293552;
+    border-color: #818cf8;
+}
+
+body.dark-theme .complaint-text {
+    color: #e2e8f0;
+}
+
+body.dark-theme .complaint-check-icon {
+    background: #293552;
+    border-color: #64748b;
+}
+
+body.dark-theme .complaint-option:has(
+    .complaint-checkbox:checked
+) {
+    background: #30365e;
+    border-color: #818cf8;
+}
+
+body.dark-theme
+.complaint-checkbox:checked
++ .complaint-check-icon {
+    background: #818cf8;
+    border-color: #818cf8;
+    color: #0f172a;
+}
+
+body.dark-theme .complaint-input {
+    background: #202b44 !important;
+    border-color: #475569 !important;
+    color: #f8fafc !important;
+}
+
+body.dark-theme .complaint-input::placeholder {
+    color: #94a3b8 !important;
+}
+
+body.dark-theme .complaint-input option {
+    background: #202b44;
+    color: #f8fafc;
+}
+
+/* ========================================
+   АДАПТИВНОСТЬ
+======================================== */
+
+@media (max-width: 768px) {
+    .complaint-option {
+        padding: 13px;
+        min-height: 54px;
+    }
+
+    .complaint-text {
+        font-size: 13px;
+    }
+}
+
 </style>
 
 <script>

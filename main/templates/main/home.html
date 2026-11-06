@@ -1,163 +1,729 @@
+
 {% extends 'main/base.html' %}
 
 {% block title %}AuraMed — Главная страница{% endblock %}
 
 {% block content %}
+
 <div class="row g-4">
 
-    <!-- 1. Главный Баннер (Большой левый блок) -->
+    <!-- ========================================
+         1. ГЛАВНЫЙ БАННЕР
+    ========================================= -->
+
     <div class="col-lg-8">
-        <div class="bento-card h-100 d-flex flex-column justify-content-between position-relative overflow-hidden" 
+        <div class="hero-card bento-card h-100 d-flex flex-column justify-content-between position-relative overflow-hidden"
              style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(238,242,255,0.85) 100%);">
-            
+
             <div>
-                <span class="badge px-3 py-2 rounded-pill mb-3 fw-medium" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+                <span class="badge px-3 py-2 rounded-pill mb-3 fw-medium hero-badge"
+                      style="background: rgba(79,70,229,0.1); color: var(--primary);">
                     ✨ Цифровая экосистема здоровья
                 </span>
-                <h1 class="display-4 fw-bold mb-3" style="letter-spacing: -1.5px; color: #0f172a;">
-                    Забота о вашем <span style="color: var(--primary);">здоровье</span>
+
+                <h1 class="display-4 fw-bold mb-3 hero-title"
+                    style="letter-spacing: -1.5px; color: #0f172a;">
+                    Забота о вашем
+                    <span style="color: var(--primary);">
+                        здоровье
+                    </span>
                 </h1>
-                <p class="text-muted fs-5 w-75 mb-4">
-                    AuraMed — современный медицинский центр, где вы можете выбрать проверенного специалиста и записаться на приём онлайн за пару кликов.
+
+                <p class="text-muted fs-5 w-75 mb-4 hero-description">
+                    AuraMed — современный медицинский центр, где вы
+                    можете выбрать проверенного специалиста и записаться
+                    на приём онлайн за пару кликов.
                 </p>
             </div>
 
             <div>
-                <a href="{% url 'doctor_list' %}" class="btn-bento-primary text-decoration-none d-inline-block">
-                    Записаться к врачу <i class="fas fa-arrow-right ms-2"></i>
+                <a href="{% url 'doctor_list' %}"
+                   class="btn-bento-primary text-decoration-none d-inline-block">
+
+                    Записаться к врачу
+
+                    <i class="fas fa-arrow-right ms-2"></i>
                 </a>
             </div>
+
         </div>
     </div>
 
-    <!-- 2. Правый виджет с показателями -->
+
+    <!-- ========================================
+         2. МОНИТОРИНГ ЗДОРОВЬЯ
+    ========================================= -->
+
     <div class="col-lg-4">
-        <div class="bento-card h-100 d-flex flex-column justify-content-between">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="fw-bold m-0">Мониторинг здоровья</h5>
-                <span class="badge bg-light text-dark rounded-pill">Онлайн</span>
+
+        <div class="monitor-card bento-card h-100 d-flex flex-column justify-content-between">
+
+            <div class="d-flex justify-content-between align-items-center gap-2">
+
+                <h5 class="fw-bold m-0">
+                    Мониторинг здоровья
+                </h5>
+
+                <span class="badge bg-light text-dark rounded-pill monitor-badge">
+                    Демонстрация
+                </span>
             </div>
 
             <div class="text-center py-4">
-                <div class="rounded-circle bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 90px; height: 90px;">
+
+                <div class="monitor-icon rounded-circle bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3"
+                     style="width:90px;height:90px;">
+
                     <i class="fas fa-heart-pulse text-danger fs-1"></i>
                 </div>
-                <h3 class="fw-bold text-dark mb-1">98 bpm</h3>
-                <p class="text-muted small">Сердечный ритм в норме</p>
+
+                <h3 class="fw-bold text-dark mb-1 monitor-value">
+                    98 bpm
+                </h3>
+
+                <p class="text-muted small mb-0">
+                    Пример показателя сердечного ритма
+                </p>
             </div>
 
-            <div class="bg-white p-3 rounded-4 shadow-sm border-0">
+            <div class="monitor-info bg-white p-3 rounded-4 shadow-sm border-0">
+
                 <div class="d-flex align-items-center gap-3">
-                    <div class="p-2 rounded-3 text-success" style="background: rgba(16, 185, 129, 0.1);">
+
+                    <div class="p-2 rounded-3 text-success"
+                         style="background: rgba(16,185,129,0.1);">
+
                         <i class="fas fa-shield-halved fs-5"></i>
                     </div>
+
                     <div>
-                        <h6 class="m-0 fw-bold fs-6">Безопасный прием</h6>
-                        <small class="text-muted">Личные данные защищены</small>
+                        <h6 class="m-0 fw-bold fs-6">
+                            Безопасный приём
+                        </h6>
+
+                        <small class="text-muted">
+                            Забота о конфиденциальности
+                        </small>
                     </div>
+
                 </div>
             </div>
+
         </div>
     </div>
 
-    <!-- 3. БЛОК УСЛУГ ("Наши направления") -->
+
+    <!-- ========================================
+         3. НАШИ НАПРАВЛЕНИЯ
+    ========================================= -->
+
     <div class="col-12 mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-bold m-0" style="letter-spacing: -0.5px;">Наши направления</h3>
-            <a href="{% url 'services' %}" class="text-decoration-none text-primary fw-semibold small">Все услуги <i class="fas fa-chevron-right ms-1"></i></a>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 gap-2">
+
+            <h3 class="fw-bold m-0"
+                style="letter-spacing: -0.5px;">
+                Наши направления
+            </h3>
+
+            <a href="{% url 'services' %}"
+               class="text-decoration-none text-primary fw-semibold small">
+
+                Все услуги
+
+                <i class="fas fa-chevron-right ms-1"></i>
+            </a>
+
         </div>
-        
+
         <div class="row g-4">
-            <!-- Услуга 1 -->
+
+            <!-- Терапия -->
+
             <div class="col-md-4">
-                <div class="bento-card h-100 text-center p-4">
-                    <div class="rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+
+                <div class="service-card bento-card h-100 text-center p-4">
+
+                    <div class="service-icon rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width:70px;height:70px;">
+
                         <span class="fs-2">🩺</span>
                     </div>
-                    <h4 class="fw-bold mb-2">Терапия</h4>
+
+                    <h4 class="fw-bold mb-2">
+                        Терапия
+                    </h4>
+
                     <p class="text-muted mb-0">
-                        Первичная консультация терапевта, комплексная диагностика и индивидуальный план лечения.
+                        Первичная консультация терапевта,
+                        комплексная диагностика и
+                        индивидуальный план лечения.
                     </p>
+
                 </div>
             </div>
 
-            <!-- Услуга 2 -->
+
+            <!-- Кардиология -->
+
             <div class="col-md-4">
-                <div class="bento-card h-100 text-center p-4">
-                    <div class="rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+
+                <div class="service-card bento-card h-100 text-center p-4">
+
+                    <div class="service-icon rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width:70px;height:70px;">
+
                         <span class="fs-2">❤️</span>
                     </div>
-                    <h4 class="fw-bold mb-2">Кардиология</h4>
+
+                    <h4 class="fw-bold mb-2">
+                        Кардиология
+                    </h4>
+
                     <p class="text-muted mb-0">
-                        Полное обследование сердечно-сосудистой системы и эффективная профилактика.
+                        Полное обследование сердечно-сосудистой
+                        системы и эффективная профилактика.
                     </p>
+
                 </div>
             </div>
 
-            <!-- Услуга 3 -->
+
+            <!-- Диагностика -->
+
             <div class="col-md-4">
-                <div class="bento-card h-100 text-center p-4">
-                    <div class="rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+
+                <div class="service-card bento-card h-100 text-center p-4">
+
+                    <div class="service-icon rounded-4 bg-white shadow-sm d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width:70px;height:70px;">
+
                         <span class="fs-2">🔬</span>
                     </div>
-                    <h4 class="fw-bold mb-2">Диагностика</h4>
+
+                    <h4 class="fw-bold mb-2">
+                        Диагностика
+                    </h4>
+
                     <p class="text-muted mb-0">
-                        Современное лабораторное оборудование и ультраточные методы обследования.
+                        Современное лабораторное оборудование
+                        и ультраточные методы обследования.
                     </p>
+
                 </div>
             </div>
+
         </div>
     </div>
 
-    <!-- 4. БЛОК ВРАЧЕЙ (Подтягивается из базы данных) -->
+
+    <!-- ========================================
+         4. НАШИ ВРАЧИ
+    ========================================= -->
+
     <div class="col-12 mt-4">
-        <div class="bento-card">
-            <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div class="doctors-section bento-card">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+
                 <div>
-                    <span class="badge px-3 py-1 rounded-pill mb-2 fw-medium" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+
+                    <span class="badge px-3 py-1 rounded-pill mb-2 fw-medium section-badge"
+                          style="background: rgba(79,70,229,0.1); color: var(--primary);">
+
                         Команда экспертов
                     </span>
-                    <h3 class="fw-bold m-0" style="letter-spacing: -0.5px;">Наши врачи</h3>
+
+                    <h3 class="fw-bold m-0"
+                        style="letter-spacing: -0.5px;">
+
+                        Наши врачи
+                    </h3>
+
                 </div>
-                <a href="{% url 'doctor_list' %}" class="btn btn-outline-dark rounded-pill px-4 btn-sm fw-semibold">
-                    Все специалисты <i class="fas fa-arrow-right ms-1"></i>
+
+                <a href="{% url 'doctor_list' %}"
+                   class="btn btn-outline-dark rounded-pill px-4 btn-sm fw-semibold specialists-button">
+
+                    Все специалисты
+
+                    <i class="fas fa-arrow-right ms-1"></i>
                 </a>
+
             </div>
 
             <div class="row g-4">
+
                 {% for doctor in doctors %}
-                    <div class="col-md-3">
-                        <div class="p-3 bg-white rounded-4 shadow-sm text-center border-0 h-100 d-flex flex-column justify-content-between">
-                            <div>
-                                <div class="rounded-circle bg-light mx-auto mb-3 overflow-hidden shadow-sm d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                    {% if doctor.photo %}
-                                        <img src="{{ doctor.photo.url }}" alt="{{ doctor.user.get_full_name }}" class="w-100 h-100 object-fit-cover">
-                                    {% else %}
-                                        <i class="fas fa-user-md text-secondary fs-2"></i>
-                                    {% endif %}
-                                </div>
-                                <h6 class="fw-bold mb-1" style="color: #0f172a;">
-                                    {{ doctor.user.get_full_name|default:doctor.user.username }}
-                                </h6>
-                                <span class="badge px-2 py-1 rounded-pill mb-2" style="background: rgba(79, 70, 229, 0.1); color: var(--primary); font-size: 0.75rem;">
-                                    {{ doctor.specialization|default:"Врач-специалист" }}
-                                </span>
+
+                <div class="col-sm-6 col-md-4 col-lg-3">
+
+                    <div class="doctor-card p-3 bg-white rounded-4 shadow-sm text-center border-0 h-100 d-flex flex-column justify-content-between">
+
+                        <div>
+
+                            <!-- Фото врача -->
+
+                            <div class="doctor-avatar rounded-circle bg-light mx-auto mb-3 overflow-hidden shadow-sm d-flex align-items-center justify-content-center"
+                                 style="width:80px;height:80px;">
+
+                                {% if doctor.image %}
+
+                                    <img
+                                        src="{{ doctor.image.url }}"
+                                        alt="{{ doctor.name }}"
+                                        style="
+                                            width:100%;
+                                            height:100%;
+                                            object-fit:cover;
+                                            object-position:center 25%;
+                                            display:block;
+                                        "
+                                    >
+
+                                {% else %}
+
+                                    <i class="fas fa-user-md text-secondary fs-2"></i>
+
+                                {% endif %}
+
                             </div>
-                            <div class="mt-3">
-                                <a href="{% url 'doctor_detail' doctor.id %}" class="btn btn-sm btn-dark rounded-pill w-100">
-                                    Записаться
-                                </a>
-                            </div>
+
+                            <!-- Имя врача -->
+
+                            <h6 class="doctor-name fw-bold mb-2"
+                                style="color:#0f172a;">
+
+                                {{ doctor.name|default:"Имя врача не указано" }}
+                            </h6>
+
+                            <!-- Специальность -->
+
+                            <span class="doctor-specialization badge px-2 py-1 rounded-pill mb-2"
+                                  style="
+                                      background:rgba(79,70,229,0.1);
+                                      color:var(--primary);
+                                      font-size:.75rem;
+                                  ">
+
+                                {{ doctor.specialization|default:"Врач-специалист" }}
+
+                            </span>
+
                         </div>
+
+                        <!-- Кнопка записи -->
+
+                        <div class="mt-3">
+
+                            <a href="{% url 'doctor_detail' doctor.id %}"
+                               class="btn btn-sm btn-dark rounded-pill w-100 doctor-book-button">
+
+                                Записаться
+                            </a>
+
+                        </div>
+
                     </div>
+
+                </div>
+
                 {% empty %}
-                    <div class="col-12 text-center py-4">
-                        <p class="text-muted m-0">Врачи пока не добавлены в систему. Зарегистрируйте их через админку или форму регистрации.</p>
-                    </div>
+
+                <div class="col-12 text-center py-4">
+
+                    <p class="text-muted m-0">
+                        Врачи пока не добавлены в систему.
+                    </p>
+
+                </div>
+
                 {% endfor %}
+
             </div>
+
         </div>
     </div>
 
 </div>
+
+
+<!-- ========================================
+     СТИЛИ ГЛАВНОЙ СТРАНИЦЫ
+======================================== -->
+
+<style>
+
+/* ==========================================
+   ОБЩИЕ УЛУЧШЕНИЯ
+========================================== */
+
+/* Плавная анимация карточек */
+
+.service-card,
+.doctor-card {
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        background-color .25s ease,
+        border-color .25s ease;
+}
+
+.service-card:hover,
+.doctor-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Аватар врача */
+
+.doctor-avatar {
+    flex-shrink: 0;
+}
+
+.doctor-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Кнопка записи */
+
+.doctor-book-button {
+    transition:
+        background-color .2s ease,
+        transform .2s ease;
+}
+
+.doctor-book-button:hover {
+    transform: translateY(-1px);
+}
+
+
+/* ==========================================
+   ТЁМНАЯ ТЕМА — ГЛАВНЫЙ БАННЕР
+========================================== */
+
+body.dark-theme .hero-card {
+    background: linear-gradient(
+        135deg,
+        #242b49 0%,
+        #30305a 100%
+    ) !important;
+
+    border: 1px solid rgba(
+        165, 180, 252, .2
+    ) !important;
+}
+
+/* Заголовок */
+
+body.dark-theme .hero-card .hero-title {
+    color: #f8fafc !important;
+}
+
+/* Акцентное слово */
+
+body.dark-theme .hero-card .hero-title span {
+    color: #a5b4fc !important;
+}
+
+/* Описание */
+
+body.dark-theme .hero-card .hero-description {
+    color: #cbd5e1 !important;
+}
+
+/* Бейдж баннера */
+
+body.dark-theme .hero-card .hero-badge {
+    background: rgba(
+        129, 140, 248, .16
+    ) !important;
+
+    color: #c7d2fe !important;
+}
+
+/* Кнопка */
+
+body.dark-theme .hero-card .btn-bento-primary {
+    background: #6366f1 !important;
+    color: #ffffff !important;
+}
+
+body.dark-theme .hero-card .btn-bento-primary:hover {
+    background: #818cf8 !important;
+}
+
+
+/* ==========================================
+   ТЁМНАЯ ТЕМА — МОНИТОРИНГ
+========================================== */
+
+body.dark-theme .monitor-card {
+    background: #19233b !important;
+    border: 1px solid rgba(165,180,252,.16) !important;
+}
+
+/* Заголовок мониторинга */
+
+body.dark-theme .monitor-card h5 {
+    color: #f8fafc !important;
+}
+
+/* Иконка */
+
+body.dark-theme .monitor-icon {
+    background: #293552 !important;
+}
+
+/* Показатель */
+
+body.dark-theme .monitor-value {
+    color: #f8fafc !important;
+}
+
+/* Подпись */
+
+body.dark-theme .monitor-card p {
+    color: #cbd5e1 !important;
+}
+
+/* Нижняя информационная карточка */
+
+body.dark-theme .monitor-info {
+    background: #24304a !important;
+    color: #f8fafc !important;
+}
+
+body.dark-theme .monitor-info h6 {
+    color: #f8fafc !important;
+}
+
+body.dark-theme .monitor-info small {
+    color: #b4bfd3 !important;
+}
+
+/* Бейдж */
+
+body.dark-theme .monitor-badge {
+    background: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+
+/* ==========================================
+   ТЁМНАЯ ТЕМА — НАПРАВЛЕНИЯ
+========================================== */
+
+body.dark-theme .service-card {
+    background: #19233b !important;
+
+    border: 1px solid rgba(
+        165,180,252,.18
+    ) !important;
+
+    color: #f1f5f9 !important;
+}
+
+/* Название направления */
+
+body.dark-theme .service-card h4 {
+    color: #f8fafc !important;
+}
+
+/* Описание */
+
+body.dark-theme .service-card p {
+    color: #cbd5e1 !important;
+}
+
+/* Фон иконки */
+
+body.dark-theme .service-card .service-icon {
+    background: #293552 !important;
+}
+
+/* Hover */
+
+body.dark-theme .service-card:hover {
+    border-color: rgba(
+        129,140,248,.45
+    ) !important;
+}
+
+
+/* ==========================================
+   ТЁМНАЯ ТЕМА — СЕКЦИЯ ВРАЧЕЙ
+========================================== */
+
+body.dark-theme .doctors-section {
+    background: rgba(
+        21,29,53,.94
+    ) !important;
+
+    border: 1px solid rgba(
+        165,180,252,.16
+    ) !important;
+}
+
+/* Заголовок */
+
+body.dark-theme .doctors-section h3 {
+    color: #f8fafc !important;
+}
+
+/* Бейдж секции */
+
+body.dark-theme .section-badge {
+    background: rgba(
+        129,140,248,.16
+    ) !important;
+
+    color: #c7d2fe !important;
+}
+
+/* Все специалисты */
+
+body.dark-theme .specialists-button {
+    background: transparent !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #818cf8 !important;
+}
+
+body.dark-theme .specialists-button:hover {
+    background: #6366f1 !important;
+    color: #ffffff !important;
+}
+
+
+/* ==========================================
+   ТЁМНАЯ ТЕМА — КАРТОЧКИ ВРАЧЕЙ
+========================================== */
+
+body.dark-theme .doctor-card {
+    background: #202b44 !important;
+
+    border: 1px solid rgba(
+        165,180,252,.18
+    ) !important;
+
+    color: #f8fafc !important;
+}
+
+/* Имя врача */
+
+body.dark-theme .doctor-card .doctor-name {
+    color: #f8fafc !important;
+}
+
+/* Специальность */
+
+body.dark-theme .doctor-card .doctor-specialization {
+    background: rgba(
+        129,140,248,.18
+    ) !important;
+
+    color: #c7d2fe !important;
+}
+
+/* Аватар */
+
+body.dark-theme .doctor-avatar {
+    background: #334155 !important;
+}
+
+/* Кнопка */
+
+body.dark-theme .doctor-book-button {
+    background: #6366f1 !important;
+    border-color: #6366f1 !important;
+    color: #ffffff !important;
+}
+
+body.dark-theme .doctor-book-button:hover {
+    background: #818cf8 !important;
+    border-color: #818cf8 !important;
+}
+
+/* Hover карточки */
+
+body.dark-theme .doctor-card:hover {
+    border-color: rgba(
+        129,140,248,.5
+    ) !important;
+
+    box-shadow: 0 15px 30px rgba(
+        0,0,0,.18
+    ) !important;
+}
+
+
+/* ==========================================
+   ТЁМНАЯ ТЕМА — ОБЩИЙ ТЕКСТ
+========================================== */
+
+body.dark-theme .text-muted {
+    color: #b4bfd3 !important;
+}
+
+body.dark-theme .bg-light {
+    background-color: #293552 !important;
+}
+
+body.dark-theme .bg-white {
+    background-color: #24304a !important;
+    color: #f8fafc !important;
+}
+
+
+/* ==========================================
+   АДАПТИВНОСТЬ
+========================================== */
+
+@media (max-width: 768px) {
+
+    .hero-card {
+        padding: 24px !important;
+    }
+
+    .hero-card .hero-description {
+        width: 100% !important;
+    }
+
+    .hero-card .hero-title {
+        font-size: 34px;
+        letter-spacing: -1px !important;
+    }
+
+    .monitor-card {
+        min-height: 300px;
+    }
+
+    .doctors-section {
+        padding: 22px !important;
+    }
+
+    .doctor-card {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .hero-card .hero-title {
+        font-size: 29px;
+    }
+
+    .hero-card .hero-description {
+        font-size: 15px !important;
+    }
+
+    .service-card {
+        padding: 22px !important;
+    }
+}
+
+</style>
+
 {% endblock %}

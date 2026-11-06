@@ -13,11 +13,23 @@ DATABASES = {
         default=os.environ.get('DATABASE_URL'),
         conn_max_age=600)
 }
-SECRET_KEY = 'django-insecure-&(p+=qt!0_o5np*c0$nzl0h&w*rokbz4q)aam%wnl6(ej@r%t2'
+SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
-DEBUG = True
+DEBUG = os.getenv(
+    "DJANGO_DEBUG", "False"
+).lower() in ("true", "1", "yes")
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "auramed-lemc.onrender.com",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://auramed-lemc.onrender.com",
+]
+
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -87,7 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
@@ -119,3 +131,19 @@ STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Безопасность HTTPS
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+
+# Учитываем HTTPS за прокси Render
+SECURE_PROXY_SSL_HEADER = (
+    "HTTP_X_FORWARDED_PROTO",
+    "https",
+)
+
+# Защита от определения типа контента
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Запрет отображения сайта во фреймах
+X_FRAME_OPTIONS = "DENY"

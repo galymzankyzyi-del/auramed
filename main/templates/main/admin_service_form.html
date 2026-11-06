@@ -1,0 +1,327 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}
+{{ page_title }} — AuraMed
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .service-form-page {
+        max-width: 960px;
+        margin: 0 auto;
+        color: var(--text-main);
+    }
+
+    .service-form-card {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--card-border, #e2e8f0);
+        border-radius: 28px;
+        padding: 30px;
+        box-shadow: var(--shadow-soft, 0 8px 25px rgba(0,0,0,.04));
+    }
+
+    .service-form-title {
+        font-size: clamp(25px, 4vw, 34px);
+        font-weight: 800;
+        letter-spacing: -.6px;
+    }
+
+    .service-field {
+        margin-bottom: 22px;
+    }
+
+    .service-field label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 9px;
+    }
+
+    .service-field .form-control {
+        width: 100%;
+        min-width: 0;
+        border-radius: 14px;
+        padding: 12px 15px;
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+        color: #1e293b;
+    }
+
+    .service-field select[multiple] {
+        min-height: 150px;
+    }
+
+    .service-field .form-control:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(99,102,241,.12);
+    }
+
+    .service-hint {
+        color: #64748b;
+        font-size: 12px;
+        margin-top: 7px;
+        line-height: 1.6;
+    }
+
+    .service-error,
+    .service-field .errorlist {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: 7px;
+    }
+
+    .service-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(99,102,241,.06);
+        border: 1px solid rgba(99,102,241,.1);
+        padding: 17px;
+        border-radius: 16px;
+        margin-bottom: 14px;
+    }
+
+    .service-option label {
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .service-option .form-check-input {
+        width: 19px;
+        height: 19px;
+        margin: 0;
+        flex-shrink: 0;
+        accent-color: #6366f1;
+    }
+
+    .service-preview {
+        width: 180px;
+        max-width: 100%;
+        height: 130px;
+        object-fit: cover;
+        border-radius: 15px;
+        margin-bottom: 10px;
+    }
+
+    .service-cancel {
+        display: inline-block;
+        color: var(--text-main);
+        text-decoration: none;
+        padding: 13px 20px;
+        border: 1px solid #cbd5e1;
+        border-radius: 999px;
+        font-weight: 600;
+    }
+
+    body.dark-theme .service-form-card {
+        background: #19233b;
+        border-color: #39435f;
+    }
+
+    body.dark-theme .service-field .form-control {
+        background: #202b44;
+        border-color: #475569;
+        color: #f8fafc;
+    }
+
+    body.dark-theme .service-field .form-control option {
+        background: #202b44;
+        color: #f8fafc;
+    }
+
+    body.dark-theme .service-hint {
+        color: #cbd5e1;
+    }
+
+    body.dark-theme .service-option {
+        background: #202b44;
+        border-color: #39435f;
+    }
+
+    body.dark-theme .service-cancel {
+        color: #f8fafc;
+        border-color: #475569;
+    }
+
+    @media (max-width: 576px) {
+        .service-form-card {
+            padding: 20px;
+            border-radius: 22px;
+        }
+
+        .service-form-actions {
+            flex-direction: column;
+        }
+
+        .service-form-actions > * {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="service-form-page py-4">
+
+    <a href="{% url 'admin_services' %}"
+       class="text-decoration-none text-muted small">
+        <i class="fas fa-arrow-left me-2"></i>
+        Назад к услугам
+    </a>
+
+    <h1 class="service-form-title mt-3 mb-4">
+        {{ page_title }}
+    </h1>
+
+    <div class="service-form-card">
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            <div class="row">
+
+                <div class="col-md-8">
+                    <div class="service-field">
+                        <label for="{{ form.name.id_for_label }}">
+                            Название услуги *
+                        </label>
+                        {{ form.name }}
+                        {{ form.name.errors }}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="service-field">
+                        <label for="{{ form.category.id_for_label }}">
+                            Категория *
+                        </label>
+                        {{ form.category }}
+                        {{ form.category.errors }}
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="service-field">
+                        <label for="{{ form.short_description.id_for_label }}">
+                            Краткое описание
+                        </label>
+                        {{ form.short_description }}
+                        {{ form.short_description.errors }}
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="service-field">
+                        <label for="{{ form.description.id_for_label }}">
+                            Полное описание
+                        </label>
+                        {{ form.description }}
+                        {{ form.description.errors }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="service-field">
+                        <label for="{{ form.price.id_for_label }}">
+                            Стоимость (₸)
+                        </label>
+                        {{ form.price }}
+                        {{ form.price.errors }}
+                        <p class="service-hint">
+                            Оставьте пустым, если стоимость уточняется.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="service-field">
+                        <label for="{{ form.duration.id_for_label }}">
+                            Продолжительность (минуты)
+                        </label>
+                        {{ form.duration }}
+                        {{ form.duration.errors }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="service-field">
+                        <label for="{{ form.image.id_for_label }}">
+                            Изображение
+                        </label>
+
+                        {% if service and service.image %}
+                        <div>
+                            <img src="{{ service.image.url }}"
+                                 class="service-preview"
+                                 alt="Текущее фото услуги">
+                        </div>
+                        {% endif %}
+
+                        {{ form.image }}
+                        {{ form.image.errors }}
+
+                        <p class="service-hint">
+                            JPEG, PNG или WebP. До 3 МБ.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="service-field">
+                        <label for="{{ form.doctors.id_for_label }}">
+                            Специалисты
+                        </label>
+                        {{ form.doctors }}
+                        {{ form.doctors.errors }}
+
+                        <p class="service-hint">
+                            Для выбора нескольких врачей
+                            удерживайте Ctrl и нажимайте на имена.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="service-option">
+                {{ form.is_active }}
+                <label for="{{ form.is_active.id_for_label }}"
+                       class="mb-0">
+                    Показывать услугу на сайте
+                </label>
+            </div>
+
+            <div class="service-option mb-4">
+                {{ form.is_featured }}
+                <label for="{{ form.is_featured.id_for_label }}"
+                       class="mb-0">
+                    Отметить как популярную
+                </label>
+            </div>
+
+            <div class="d-flex flex-wrap gap-3 service-form-actions">
+
+                <button type="submit" class="btn-bento-primary">
+                    <i class="fas fa-save me-2"></i>
+                    {{ button_text }}
+                </button>
+
+                <a href="{% url 'admin_services' %}"
+                   class="service-cancel">
+                    Отмена
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
